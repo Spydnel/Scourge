@@ -1,0 +1,13 @@
+{
+  "itemGroup.scourge": "Example Mod Tab",
+  "block.scourge.example_block": "Example Block",
+  "item.scourge.example_item": "Example Item",
+
+  "scourge.configuration.title": "Scourge Configs",
+  "scourge.configuration.section.scourge.common.toml": "Scourge Configs",
+  "scourge.configuration.section.scourge.common.toml.title": "Scourge Configs",
+  "scourge.configuration.items": "Item List",
+  "scourge.configuration.logDirtBlock": "Log Dirt Block",
+  "scourge.configuration.magicNumberIntroduction": "Magic Number Text",
+  "scourge.configuration.magicNumber": "Magic Number"
+}
