@@ -7,6 +7,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
+import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
 import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
@@ -16,7 +17,16 @@ public class CombatEvents {
         Scourge.LOGGER.debug("ajndlflksfl");
         Player player = event.getEntity();
         if (!player.onGround()) {
-            player.setDeltaMovement(new Vec3(0, 0.7, 0));
+            player.setDeltaMovement(new Vec3(0, 0.55, 0));
+        }
+    }
+
+    @SubscribeEvent
+    public static void OnLivingKnockback(LivingKnockBackEvent event) {
+        LivingEntity target = event.getEntity();
+        LivingEntity attacker = target.getLastAttacker();
+        if (!attacker.onGround()) {
+            event.setStrength(0.1f);
         }
     }
 }
