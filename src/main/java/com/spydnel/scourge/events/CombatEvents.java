@@ -1,6 +1,8 @@
 package com.spydnel.scourge.events;
 
 import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.ScourgeSounds;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -17,7 +19,8 @@ public class CombatEvents {
         Scourge.LOGGER.debug("ajndlflksfl");
         Player player = event.getEntity();
         if (!player.onGround()) {
-            player.setDeltaMovement(new Vec3(0, 0.55, 0));
+            player.setDeltaMovement(new Vec3(0, 0.65, 0));
+            player.level().playSound(null, player.blockPosition(), ScourgeSounds.SWORD_BOUNCE.value(), SoundSource.PLAYERS);
         }
     }
 
