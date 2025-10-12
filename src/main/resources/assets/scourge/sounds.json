@@ -2,8 +2,8 @@
   "item.sword.bounce": {
     "sounds": [
       {
-        "name": "block.anvil.place",
-        "pitch": 5,
+        "name": "item.trident.throw",
+        "pitch": 0.7,
         "type": "event"
       }
     ]
