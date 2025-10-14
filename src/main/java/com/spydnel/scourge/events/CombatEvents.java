@@ -3,6 +3,7 @@ package com.spydnel.scourge.events;
 import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.ScourgeParticles;
 import com.spydnel.scourge.ScourgeSounds;
+import net.minecraft.client.Minecraft;
 import net.minecraft.core.particles.ParticleOptions;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundSource;
@@ -11,6 +12,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
+import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
@@ -19,7 +21,6 @@ import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 public class CombatEvents {
     @SubscribeEvent
     public static void OnAttackEntity(AttackEntityEvent event) {
-        Scourge.LOGGER.debug("ajndlflksfl");
         Player player = event.getEntity();
         Vec3 pos = player.getEyePosition().add(player.getLookAngle().scale(1.6));
         if (!player.onGround()) {
