@@ -16,6 +16,6 @@
   "textures": {
     "particle": "scourge:block/stone_pillar",
     "side": "scourge:block/stone_pillar",
-    "end": "minecraft:block/stone"
+    "end": "minecraft:block/stone"  
   }
 }

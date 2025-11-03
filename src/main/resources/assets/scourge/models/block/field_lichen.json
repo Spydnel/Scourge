@@ -1,0 +1,24 @@
+{
+	"format_version": "1.21.6",
+	"credit": "Made with Blockbench",
+	"texture_size": [32, 32],
+	"textures": {
+		"0": "scourge:block/field_lichen",
+		"particle": "scourge:block/field_lichen"
+	},
+	"render_type": "cutout",
+	"elements": [
+		{
+			"from": [-0.5, -13, -0.5],
+			"to": [16.5, 1, 16.5],
+			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1, 0]},
+			"faces": {
+				"north": {"uv": [0, 8.5, 8.5, 15.5], "texture": "#0"},
+				"east": {"uv": [0, 8.5, 8.5, 15.5], "texture": "#0"},
+				"south": {"uv": [0, 8.5, 8.5, 15.5], "texture": "#0"},
+				"west": {"uv": [0, 8.5, 8.5, 15.5], "texture": "#0"},
+				"up": {"uv": [0, 0, 8.5, 8.5], "texture": "#0"}
+			}
+		}
+	]
+}

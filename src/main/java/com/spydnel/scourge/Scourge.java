@@ -57,13 +57,13 @@ public class Scourge {
 
         // Register the Deferred Register to the mod event bus so blocks get registered
         ScourgeBlocks.BLOCKS.register(modEventBus);
-        // Register the Deferred Register to the mod event bus so items get registered
         ScourgeItems.ITEMS.register(modEventBus);
         // Register the Deferred Register to the mod event bus so tabs get registered
         CREATIVE_MODE_TABS.register(modEventBus);
 
         ScourgeSounds.SOUND_EVENTS.register(modEventBus);
         ScourgeParticles.PARTICLE_TYPES.register(modEventBus);
+        ScourgeFeatures.FEATURES.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Scourge) to respond directly to events.

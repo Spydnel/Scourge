@@ -17,4 +17,12 @@ public class ScourgeBlocks {
     public static final DeferredBlock<RotatedPillarBlock> STONE_PILLAR = BLOCKS.register(
             "stone_pillar",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)));
+
+    public static final DeferredBlock<CarpetBlock> FIELD_LICHEN = BLOCKS.register(
+            "field_lichen",
+            () -> new CarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
+
+    public static final DeferredBlock<TransparentBlock> FACE = BLOCKS.register(
+            "face",
+            () -> new TransparentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion()));
 }

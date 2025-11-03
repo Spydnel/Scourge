@@ -9,4 +9,5 @@ public class ScourgeItems {
 
     public static final DeferredItem<BlockItem> CHISELED_STONE = ITEMS.registerSimpleBlockItem("chiseled_stone", ScourgeBlocks.CHISELED_STONE);
     public static final DeferredItem<BlockItem> STONE_PILLAR = ITEMS.registerSimpleBlockItem("stone_pillar", ScourgeBlocks.STONE_PILLAR);
+    public static final DeferredItem<BlockItem> FIELD_LICHEN = ITEMS.registerSimpleBlockItem("field_lichen", ScourgeBlocks.FIELD_LICHEN);
 }
