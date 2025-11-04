@@ -1,0 +1,47 @@
+{
+  "type": "nomansland:boulder",
+  "config": {
+    "decorators": [
+      {
+        "type": "nomansland:cluster_on_stone",
+        "block_provider": {
+          "type": "minecraft:simple_state_provider",
+          "state": {
+            "Name": "scourge:field_lichen"
+          }
+        },
+        "probability": 0.5,
+        "limit": 12
+      }
+    ],
+    "block_provider": {
+      "type": "minecraft:weighted_state_provider",
+      "entries": [
+        {
+          "data": {
+            "Name": "minecraft:cobblestone"
+          },
+          "weight": 1
+        },
+        {
+          "data": {
+            "Name": "minecraft:mossy_cobblestone"
+          },
+          "weight": 1
+        }
+      ]
+    },
+    "num_cubes": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 3,
+      "max_inclusive": 4
+    },
+    "cube_height": {
+      "type": "minecraft:uniform",
+      "min_inclusive": 2,
+      "max_inclusive": 4
+    },
+    "cube_height_decrease": 1,
+    "num_eroded_blocks": 1
+  }
+}

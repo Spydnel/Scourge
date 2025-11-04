@@ -38,7 +38,7 @@ public class CombatEvents {
     public static void OnLivingKnockback(LivingKnockBackEvent event) {
         LivingEntity target = event.getEntity();
         LivingEntity attacker = target.getLastAttacker();
-        if (!attacker.onGround()) {
+        if (attacker != null && !attacker.onGround()) {
             event.setStrength(0.1f);
         }
     }
