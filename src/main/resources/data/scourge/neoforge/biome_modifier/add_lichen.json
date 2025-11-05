@@ -1,6 +1,0 @@
-{
-  "type": "neoforge:add_features",
-  "biomes": "#scourge:has_lichen",
-  "features": "scourge:lichen",
-  "step": "vegetal_decoration"
-}

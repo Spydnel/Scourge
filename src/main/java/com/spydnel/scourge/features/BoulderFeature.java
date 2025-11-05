@@ -18,7 +18,6 @@ import java.util.Arrays;
 public class BoulderFeature extends Feature<BlockStateConfiguration> {
 
     private static final Block STONE = Blocks.STONE;
-    private static final Block LICHEN = ScourgeBlocks.FIELD_LICHEN.get();
     public BoulderFeature(Codec<BlockStateConfiguration> codec) {
         super(codec);
     }
@@ -48,7 +47,7 @@ public class BoulderFeature extends Feature<BlockStateConfiguration> {
                 BlockPos centerPos = positions[12];
                 int distance = (int) positions[i].distToCenterSqr(centerPos.getX(), centerPos.getY(), centerPos.getZ());
                 if (4 - distance > randomSource.nextInt(1, 4)) {
-                    pillar(level, positions[i], 4 - distance / 2, randomSource);
+                    pillar(level, positions[i], 4 - distance / 2, randomSource, context);
                 }
             }
 
@@ -57,11 +56,11 @@ public class BoulderFeature extends Feature<BlockStateConfiguration> {
         return false;
     }
 
-    private static void pillar(WorldGenLevel level, BlockPos blockPos, int height, RandomSource randomSource) {
+    private static void pillar(WorldGenLevel level, BlockPos blockPos, int height, RandomSource randomSource, FeaturePlaceContext<BlockStateConfiguration> context) {
         for (int i = 0; i < height; i++) {
             place(level, blockPos.above(i), STONE);
         }
-        placeWithChance(level, blockPos.above(height), LICHEN, 80, randomSource);
+        placeWithChance(level, blockPos.above(height), context.config().state.getBlock(), 80, randomSource);
     }
 
     private static void place(WorldGenLevel level, BlockPos blockPos, Block block) {

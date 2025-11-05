@@ -4,13 +4,13 @@
 	"render_type": "cutout",
 	"texture_size": [32, 32],
 	"textures": {
-		"0": "scourge:block/field_lichen",
+		"0": "scourge:block/cliff_lichen",
 		"particle": "scourge:block/field_lichen_particle"
 	},
 	"elements": [
 		{
 			"from": [-0.5, -13, -0.5],
-			"to": [16.5, 0.75, 16.5],
+			"to": [16.5, 0.79, 16.5],
 			"rotation": {"angle": 0, "axis": "y", "origin": [0, 1, 0]},
 			"neoforge_data": {
 				"ambient_occlusion": false

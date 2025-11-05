@@ -1,0 +1,6 @@
+{
+  "type": "neoforge:add_features",
+  "biomes": "#scourge:has_cliff_lichen",
+  "features": "scourge:cliff_lichen_boulder",
+  "step": "vegetal_decoration"
+}

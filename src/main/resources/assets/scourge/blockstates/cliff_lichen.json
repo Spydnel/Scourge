@@ -1,0 +1,7 @@
+{
+  "variants" : {
+    "" : {
+      "model" : "scourge:block/cliff_lichen"
+    }
+  }
+}

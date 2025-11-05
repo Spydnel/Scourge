@@ -2,7 +2,7 @@
   "type": "scourge:boulder",
   "config": {
     "state": {
-      "Name": "minecraft:red_terracotta"
+      "Name": "scourge:hill_lichen"
     }
   }
 }

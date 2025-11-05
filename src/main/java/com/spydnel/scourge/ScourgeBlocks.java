@@ -22,6 +22,15 @@ public class ScourgeBlocks {
             "field_lichen",
             () -> new CarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
 
+    public static final DeferredBlock<CarpetBlock> HILL_LICHEN = BLOCKS.register(
+            "hill_lichen",
+            () -> new CarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
+
+    public static final DeferredBlock<CarpetBlock> CLIFF_LICHEN = BLOCKS.register(
+            "cliff_lichen",
+            () -> new CarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
+
+
     public static final DeferredBlock<TransparentBlock> FACE = BLOCKS.register(
             "face",
             () -> new TransparentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion()));
