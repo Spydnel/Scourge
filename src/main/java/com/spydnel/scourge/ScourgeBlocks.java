@@ -33,5 +33,5 @@ public class ScourgeBlocks {
 
     public static final DeferredBlock<TransparentBlock> FACE = BLOCKS.register(
             "face",
-            () -> new TransparentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion()));
+            () -> new TransparentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion().forceSolidOff()));
 }

@@ -35,8 +35,10 @@ public class StoneGolemRenderer extends EntityRenderer<StoneGolem> {
         BlockState blockstate = Blocks.DARK_OAK_SLAB.defaultBlockState();
 
         poseStack.pushPose();
-        renderBlock(Blocks.DARK_OAK_SLAB.defaultBlockState(), entity, poseStack, buffer);
+        renderBlock(Blocks.DARK_OAK_PLANKS.defaultBlockState(), entity, poseStack, buffer);
+        poseStack.translate(0, 1, 0);
         renderBlock(Blocks.WAXED_EXPOSED_CUT_COPPER_STAIRS.defaultBlockState(), entity, poseStack, buffer);
+        poseStack.translate(0, 1, 0);
         renderBlock(Blocks.SPONGE.defaultBlockState(), entity, poseStack, buffer);
 
         poseStack.popPose();
@@ -65,8 +67,7 @@ public class StoneGolemRenderer extends EntityRenderer<StoneGolem> {
                             blockstate.getSeed(BlockPos.ZERO),
                             OverlayTexture.NO_OVERLAY, ModelData.EMPTY, renderType);
                 }
-
-
+                poseStack.translate(0.5, 0.0, 0.5);
             }
         }
     }
