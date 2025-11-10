@@ -4,17 +4,15 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
-import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
+import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
-import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
@@ -23,16 +21,17 @@ import net.neoforged.neoforge.client.model.data.ModelData;
 
 import java.util.Iterator;
 
-public class StoneGolemRenderer extends EntityRenderer<StoneGolem> {
+public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<StoneGolem>> {
     private final BlockRenderDispatcher dispatcher;
 
     public StoneGolemRenderer(EntityRendererProvider.Context context) {
-        super(context);
+
+        super(context, new StoneGolemModel<>(), 1);
         this.dispatcher = context.getBlockRenderDispatcher();
     }
 
+
     public void render(StoneGolem entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        BlockState blockstate = Blocks.DARK_OAK_SLAB.defaultBlockState();
 
         poseStack.pushPose();
         renderBlock(Blocks.DARK_OAK_PLANKS.defaultBlockState(), entity, poseStack, buffer);
@@ -40,6 +39,8 @@ public class StoneGolemRenderer extends EntityRenderer<StoneGolem> {
         renderBlock(Blocks.WAXED_EXPOSED_CUT_COPPER_STAIRS.defaultBlockState(), entity, poseStack, buffer);
         poseStack.translate(0, 1, 0);
         renderBlock(Blocks.SPONGE.defaultBlockState(), entity, poseStack, buffer);
+
+
 
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
