@@ -1,5 +1,6 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.registry;
 
+import com.spydnel.scourge.Scourge;
 import net.minecraft.world.item.BlockItem;
 import net.neoforged.neoforge.registries.DeferredItem;
 import net.neoforged.neoforge.registries.DeferredRegister;

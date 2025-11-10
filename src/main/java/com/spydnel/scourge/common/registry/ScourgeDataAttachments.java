@@ -1,6 +1,7 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.registry;
 
 import com.mojang.serialization.Codec;
+import com.spydnel.scourge.Scourge;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.registries.DeferredRegister;
 import net.neoforged.neoforge.registries.NeoForgeRegistries;

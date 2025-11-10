@@ -1,4 +1,4 @@
-package com.spydnel.scourge.particle;
+package com.spydnel.scourge.common.particle;
 
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.ParticleRenderType;

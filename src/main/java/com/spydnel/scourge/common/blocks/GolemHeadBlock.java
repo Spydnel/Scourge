@@ -1,4 +1,4 @@
-package com.spydnel.scourge.blocks;
+package com.spydnel.scourge.common.blocks;
 
 import net.minecraft.world.level.block.Block;
 

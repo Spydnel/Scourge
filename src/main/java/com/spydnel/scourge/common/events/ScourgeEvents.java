@@ -1,6 +1,8 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.events;
 
-import com.spydnel.scourge.particle.SwordBounceProvider;
+import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.common.registry.ScourgeParticles;
+import com.spydnel.scourge.common.particle.SwordBounceProvider;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;

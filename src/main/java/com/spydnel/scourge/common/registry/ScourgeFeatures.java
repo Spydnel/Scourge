@@ -1,14 +1,10 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.registry;
 
-import com.spydnel.scourge.features.BoulderFeature;
+import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.common.features.BoulderFeature;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.core.registries.Registries;
-import net.minecraft.resources.ResourceKey;
-import net.minecraft.world.level.levelgen.feature.BlockBlobFeature;
-import net.minecraft.world.level.levelgen.feature.ConfiguredFeature;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
-import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
 import java.util.function.Supplier;

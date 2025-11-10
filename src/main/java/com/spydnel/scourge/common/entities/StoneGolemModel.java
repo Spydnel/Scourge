@@ -1,10 +1,9 @@
-package com.spydnel.scourge.entities;
+package com.spydnel.scourge.common.entities;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.animal.Animal;
 
 public class StoneGolemModel<T extends LivingEntity> extends EntityModel<StoneGolem> {
     @Override

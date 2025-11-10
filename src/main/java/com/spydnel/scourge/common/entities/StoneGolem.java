@@ -1,7 +1,5 @@
-package com.spydnel.scourge.entities;
+package com.spydnel.scourge.common.entities;
 
-import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.world.entity.*;

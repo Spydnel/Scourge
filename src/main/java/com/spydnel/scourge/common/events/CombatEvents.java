@@ -1,23 +1,15 @@
-package com.spydnel.scourge.events;
+package com.spydnel.scourge.common.events;
 
-import com.spydnel.scourge.Scourge;
-import com.spydnel.scourge.ScourgeParticles;
-import com.spydnel.scourge.ScourgeSounds;
-import net.minecraft.client.Minecraft;
-import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleTypes;
+import com.spydnel.scourge.common.registry.ScourgeParticles;
+import com.spydnel.scourge.common.registry.ScourgeSounds;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.Vec3;
 import net.neoforged.bus.api.SubscribeEvent;
-import net.neoforged.neoforge.client.event.InputEvent;
 import net.neoforged.neoforge.client.event.RenderHandEvent;
-import net.neoforged.neoforge.event.entity.living.LivingEvent;
 import net.neoforged.neoforge.event.entity.living.LivingKnockBackEvent;
 import net.neoforged.neoforge.event.entity.player.AttackEntityEvent;
-import net.neoforged.neoforge.event.entity.player.PlayerEvent;
 
 public class CombatEvents {
     @SubscribeEvent

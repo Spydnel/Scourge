@@ -1,9 +1,7 @@
-package com.spydnel.scourge.features;
+package com.spydnel.scourge.common.features;
 
 import com.mojang.serialization.Codec;
-import com.spydnel.scourge.ScourgeBlocks;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Position;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.WorldGenLevel;
@@ -12,8 +10,6 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.levelgen.feature.Feature;
 import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
 import net.minecraft.world.level.levelgen.feature.configurations.BlockStateConfiguration;
-
-import java.util.Arrays;
 
 public class BoulderFeature extends Feature<BlockStateConfiguration> {
 

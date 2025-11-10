@@ -1,9 +1,8 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.registry;
 
-import com.mojang.serialization.MapCodec;
+import com.spydnel.scourge.Scourge;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraft.world.level.material.MapColor;
 import net.neoforged.neoforge.registries.DeferredBlock;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

@@ -1,5 +1,6 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.registry;
 
+import com.spydnel.scourge.Scourge;
 import net.minecraft.core.Holder;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.sounds.SoundEvent;

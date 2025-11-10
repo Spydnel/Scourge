@@ -1,5 +1,6 @@
-package com.spydnel.scourge;
+package com.spydnel.scourge.common.registry;
 
+import com.spydnel.scourge.Scourge;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.core.registries.BuiltInRegistries;
