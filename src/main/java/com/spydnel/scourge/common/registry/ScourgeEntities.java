@@ -2,13 +2,11 @@ package com.spydnel.scourge.common.registry;
 
 import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.common.entities.StoneGolem;
-import com.spydnel.scourge.common.entities.StoneGolemRenderer;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.MobCategory;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
-import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.event.entity.EntityAttributeCreationEvent;
 import net.neoforged.neoforge.registries.DeferredRegister;
 

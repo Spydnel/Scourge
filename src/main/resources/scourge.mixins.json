@@ -1,6 +1,6 @@
 {
   "required": true,
-  "package": "com.spydnel.scourge.mixin",
+  "package": "com.spydnel.scourge.common.mixin",
   "mixins": [
     "SwordItemMixin"
   ]

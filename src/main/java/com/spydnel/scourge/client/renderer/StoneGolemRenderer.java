@@ -1,6 +1,11 @@
-package com.spydnel.scourge.common.entities;
+package com.spydnel.scourge.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.client.model.StoneGolemModel;
+import com.spydnel.scourge.client.registry.ScourgeLayers;
+import com.spydnel.scourge.common.entities.StoneGolem;
+import com.spydnel.scourge.common.registry.ScourgeBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -9,40 +14,51 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.block.state.properties.BlockStateProperties;
+import net.neoforged.api.distmarker.Dist;
+import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.RenderTypeHelper;
 import net.neoforged.neoforge.client.model.data.ModelData;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
+@OnlyIn(Dist.CLIENT)
 public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<StoneGolem>> {
     private final BlockRenderDispatcher dispatcher;
 
     public StoneGolemRenderer(EntityRendererProvider.Context context) {
-
-        super(context, new StoneGolemModel<>(), 1);
+        super(context, new StoneGolemModel<>(context.bakeLayer(ScourgeLayers.STONE_GOLEM_LAYER)), 1);
         this.dispatcher = context.getBlockRenderDispatcher();
     }
 
 
-    public void render(StoneGolem entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+    public void render(@NotNull StoneGolem entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 
+        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.pushPose();
-        renderBlock(Blocks.DARK_OAK_PLANKS.defaultBlockState(), entity, poseStack, buffer);
-        poseStack.translate(0, 1, 0);
-        renderBlock(Blocks.WAXED_EXPOSED_CUT_COPPER_STAIRS.defaultBlockState(), entity, poseStack, buffer);
-        poseStack.translate(0, 1, 0);
-        renderBlock(Blocks.SPONGE.defaultBlockState(), entity, poseStack, buffer);
+        this.setupRotations(entity, poseStack, 1, entityYaw, partialTicks, 1);
+
+        poseStack.translate(-1, 0, -1);
+
+        renderBlock(ScourgeBlocks.CHISELED_STONE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST), entity, poseStack, buffer);
+        poseStack.translate(1, 0, 0);
+        renderBlock(ScourgeBlocks.STONE_PILLAR.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), entity, poseStack, buffer);
+        poseStack.translate(0, 0, 1);
+        renderBlock(Blocks.STONE.defaultBlockState(), entity, poseStack, buffer);
+
 
 
 
         poseStack.popPose();
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+
     }
 
     public void renderBlock(BlockState blockstate, StoneGolem entity, PoseStack poseStack, MultiBufferSource buffer) {
@@ -73,7 +89,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
     }
 
     @Override
-    public ResourceLocation getTextureLocation(StoneGolem stoneGolem) {
-        return null;
+    public @NotNull ResourceLocation getTextureLocation(StoneGolem stoneGolem) {
+        return ResourceLocation.fromNamespaceAndPath(Scourge.MODID, "textures/entity/stone_golem.png");
     }
 }

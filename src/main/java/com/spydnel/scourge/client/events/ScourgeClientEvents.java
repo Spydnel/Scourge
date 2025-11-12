@@ -1,7 +1,11 @@
 package com.spydnel.scourge.client.events;
 
-import com.spydnel.scourge.common.entities.StoneGolemRenderer;
+import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.client.model.StoneGolemModel;
+import com.spydnel.scourge.client.renderer.StoneGolemRenderer;
 import com.spydnel.scourge.common.registry.ScourgeEntities;
+import net.minecraft.client.model.geom.ModelLayerLocation;
+import net.minecraft.resources.ResourceLocation;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.bus.api.SubscribeEvent;
