@@ -48,15 +48,6 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
         poseStack.translate(-1, 0, -1);
 
-        renderBlock(ScourgeBlocks.CHISELED_STONE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST), entity, poseStack, buffer);
-        poseStack.translate(1, 0, 0);
-        renderBlock(ScourgeBlocks.STONE_PILLAR.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), entity, poseStack, buffer);
-        poseStack.translate(0, 0, 1);
-        renderBlock(Blocks.STONE.defaultBlockState(), entity, poseStack, buffer);
-
-
-
-
         poseStack.popPose();
 
     }
