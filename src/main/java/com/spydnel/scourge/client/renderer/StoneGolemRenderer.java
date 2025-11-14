@@ -5,7 +5,6 @@ import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.client.model.StoneGolemModel;
 import com.spydnel.scourge.client.registry.ScourgeLayers;
 import com.spydnel.scourge.common.entities.StoneGolem;
-import com.spydnel.scourge.common.registry.ScourgeBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -14,14 +13,15 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.RenderTypeHelper;
@@ -46,7 +46,25 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
         poseStack.pushPose();
         this.setupRotations(entity, poseStack, 1, entityYaw, partialTicks, 1);
 
-        poseStack.translate(-1, 0, -1);
+        Iterator<BlockState> iterator = entity.getBlocks().iterator();
+        int i = 0;
+        while(iterator.hasNext()) {
+            BlockState blockState = (BlockState) iterator.next();
+            int y = i / 9;
+            int x = (i - y) / 3;
+            int z = (i - y - x);
+            if (!blockState.isEmpty()) {
+                poseStack.translate(x - 1, y, z - 1);
+                renderBlock(blockState, entity, poseStack, buffer);
+            }
+            poseStack.clear();
+            i++;
+        }
+
+
+
+
+
 
         poseStack.popPose();
 
