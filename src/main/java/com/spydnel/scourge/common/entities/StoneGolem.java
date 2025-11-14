@@ -1,8 +1,10 @@
 package com.spydnel.scourge.common.entities;
 
 import net.minecraft.core.NonNullList;
+import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
@@ -24,14 +26,14 @@ import java.util.Iterator;
 
 public class StoneGolem extends Animal {
     private EatBlockGoal eatBlockGoal;
-    private final NonNullList<ItemStack> blocks;
+    private final NonNullList<BlockState> blocks;
 
     public StoneGolem(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.blocks = NonNullList.withSize(45, ItemStack.EMPTY);
+        this.blocks = NonNullList.withSize(36, Blocks.IRON_BLOCK.defaultBlockState());
     }
 
-    public Iterable<ItemStack> getBlocks() {
+    public Iterable<BlockState> getBlocks() {
         return this.blocks;
     }
 
@@ -41,9 +43,9 @@ public class StoneGolem extends Animal {
         Iterator iterator = this.blocks.iterator();
 
         while(iterator.hasNext()) {
-            ItemStack itemstack = (ItemStack)iterator.next();
-            if (!itemstack.isEmpty()) {
-                listtag.add(itemstack.save(this.registryAccess()));
+            BlockState blockState = (BlockState) iterator.next();
+            if (!blockState.isEmpty()) {
+                listtag.add(NbtUtils.writeBlockState(blockState));
             } else {
                 listtag.add(new CompoundTag());
             }
@@ -59,7 +61,7 @@ public class StoneGolem extends Animal {
 
             for(int i = 0; i < this.blocks.size(); ++i) {
                 CompoundTag compoundtag = listtag.getCompound(i);
-                this.blocks.set(i, ItemStack.parseOptional(this.registryAccess(), compoundtag));
+                this.blocks.set(i, NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), compoundtag));
             }
         }
     }
