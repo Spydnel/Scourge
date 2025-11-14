@@ -5,7 +5,6 @@ import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.client.model.StoneGolemModel;
 import com.spydnel.scourge.client.registry.ScourgeLayers;
 import com.spydnel.scourge.common.entities.StoneGolem;
-import com.spydnel.scourge.common.registry.ScourgeBlocks;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
@@ -14,14 +13,14 @@ import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
 import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
+import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.RandomSource;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
 import net.neoforged.neoforge.client.RenderTypeHelper;
@@ -46,13 +45,18 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
         poseStack.pushPose();
         this.setupRotations(entity, poseStack, 1, entityYaw, partialTicks, 1);
 
+        Iterator<ItemStack> iterator = entity.getBlocks().iterator();
+        while(iterator.hasNext()) {
+            ItemStack itemstack = (ItemStack)iterator.next();
+            if (itemstack.getItem().equals(BlockItem.class)) {
+                renderBlock(((BlockItem)itemstack.getItem()).getBlock().defaultBlockState());
+            } else {
+                listtag.add(new CompoundTag());
+            }
+        }
         poseStack.translate(-1, 0, -1);
 
-        renderBlock(ScourgeBlocks.CHISELED_STONE.get().defaultBlockState().setValue(BlockStateProperties.HORIZONTAL_FACING, Direction.EAST), entity, poseStack, buffer);
-        poseStack.translate(1, 0, 0);
-        renderBlock(ScourgeBlocks.STONE_PILLAR.get().defaultBlockState().setValue(BlockStateProperties.AXIS, Direction.Axis.X), entity, poseStack, buffer);
-        poseStack.translate(0, 0, 1);
-        renderBlock(Blocks.STONE.defaultBlockState(), entity, poseStack, buffer);
+
 
 
 
