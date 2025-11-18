@@ -48,16 +48,17 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
         Iterator<BlockState> iterator = entity.getBlocks().iterator();
         int i = 0;
+        poseStack.translate(-1, 0, -1);
         while(iterator.hasNext()) {
             BlockState blockState = (BlockState) iterator.next();
             int y = i / 9;
-            int x = (i - y) / 3;
-            int z = (i - y - x);
+            int x = (i - y * 9) / 3;
+            int z = (i - y * 9 - x * 3);
             if (!blockState.isEmpty()) {
-                poseStack.translate(x - 1, y, z - 1);
+                poseStack.translate(x, y, z);
                 renderBlock(blockState, entity, poseStack, buffer);
             }
-            poseStack.clear();
+            poseStack.translate(-x, -y, -z);
             i++;
         }
 
@@ -74,7 +75,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
         if (blockstate.getRenderShape() == RenderShape.MODEL) {
             Level level = entity.level();
             if (blockstate != level.getBlockState(entity.blockPosition()) && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                BlockPos blockpos = BlockPos.containing(entity.getX(), entity.getBoundingBox().maxY, entity.getZ());
+                BlockPos blockpos = BlockPos.ZERO;
                 poseStack.translate(-0.5, 0.0, -0.5);
                 BakedModel model = this.dispatcher.getBlockModel(blockstate);
                 Iterator var11 = model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(BlockPos.ZERO)), ModelData.EMPTY).iterator();
@@ -82,7 +83,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
                     RenderType renderType = (RenderType)var11.next();
                     this.dispatcher.getModelRenderer().tesselateBlock(
                             level,
-                            this.dispatcher.getBlockModel(blockstate),
+                            model,
                             blockstate,
                             blockpos,
                             poseStack,
