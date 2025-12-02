@@ -32,7 +32,7 @@ public class StoneGolem extends Animal {
     public StoneGolem(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
         this.blocks = NonNullList.withSize(36, Blocks.STONE.defaultBlockState());
-        this.blocks.set(26, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+        this.blocks.set(12, ScourgeBlocks.STONE_GOLEM_HEAD.get().defaultBlockState());
         this.blocks.set(27, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
         this.blocks.set(28, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
         this.blocks.set(29, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
