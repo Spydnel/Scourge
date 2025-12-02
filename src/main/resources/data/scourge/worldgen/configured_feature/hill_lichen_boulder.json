@@ -1,8 +1,0 @@
-{
-  "type": "scourge:boulder",
-  "config": {
-    "state": {
-      "Name": "scourge:hill_lichen"
-    }
-  }
-}

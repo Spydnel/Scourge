@@ -2,8 +2,5 @@
   "values": [
     "#c:is_plains",
     "#c:is_forest"
-  ],
-  "remove": [
-    "#c:is_birch_forest"
   ]
 }
