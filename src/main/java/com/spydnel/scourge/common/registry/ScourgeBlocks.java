@@ -1,6 +1,7 @@
 package com.spydnel.scourge.common.registry;
 
 import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.common.blocks.GolemHeadBlock;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.neoforged.neoforge.registries.DeferredBlock;
@@ -30,7 +31,7 @@ public class ScourgeBlocks {
             () -> new CarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));
 
 
-    public static final DeferredBlock<TransparentBlock> FACE = BLOCKS.register(
-            "face",
-            () -> new TransparentBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS).noOcclusion().forceSolidOff()));
+    public static final DeferredBlock<GolemHeadBlock> STONE_GOLEM_HEAD = BLOCKS.register(
+            "stone_golem_head",
+            () -> new GolemHeadBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE)));
 }

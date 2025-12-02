@@ -75,7 +75,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
         if (blockstate.getRenderShape() == RenderShape.MODEL) {
             Level level = entity.level();
             if (blockstate != level.getBlockState(entity.blockPosition()) && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                BlockPos blockpos = BlockPos.ZERO;
+                BlockPos blockpos = entity.blockPosition().above();
                 poseStack.translate(-0.5, 0.0, -0.5);
                 BakedModel model = this.dispatcher.getBlockModel(blockstate);
                 Iterator var11 = model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(BlockPos.ZERO)), ModelData.EMPTY).iterator();

@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "scourge:block/stone_golem_head",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "scourge:block/stone_golem_head"
+    },
+    "facing=south": {
+      "model": "scourge:block/stone_golem_head",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "scourge:block/stone_golem_head",
+      "y": 270
+    }
+  }
+}
