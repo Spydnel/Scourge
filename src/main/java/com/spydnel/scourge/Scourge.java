@@ -59,6 +59,7 @@ public class Scourge {
         ScourgeParticles.PARTICLE_TYPES.register(modEventBus);
         ScourgeFeatures.FEATURES.register(modEventBus);
         ScourgeEntities.ENTITIES.register(modEventBus);
+        ScourgeBlockEntities.BLOCK_ENTITY_TYPES.register(modEventBus);
 
         // Register ourselves for server and other game events we are interested in.
         // Note that this is necessary if and only if we want *this* class (Scourge) to respond directly to events.

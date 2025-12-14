@@ -1,6 +1,7 @@
 package com.spydnel.scourge.common.entities;
 
 import com.spydnel.scourge.common.registry.ScourgeBlocks;
+import com.spydnel.scourge.common.registry.ScourgeEntities;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
@@ -27,26 +28,33 @@ import java.util.Iterator;
 
 public class StoneGolem extends Animal {
     private EatBlockGoal eatBlockGoal;
-    private final NonNullList<BlockState> blocks;
+    private NonNullList<BlockState> blocks;
 
     public StoneGolem(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-        this.blocks = NonNullList.withSize(36, Blocks.STONE.defaultBlockState());
-        this.blocks.set(12, ScourgeBlocks.STONE_GOLEM_HEAD.get().defaultBlockState());
-        this.blocks.set(27, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(28, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(29, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(30, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(31, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(32, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(33, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(34, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-        this.blocks.set(35, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks = NonNullList.withSize(36, Blocks.STONE.defaultBlockState());
+//        this.blocks.set(12, ScourgeBlocks.STONE_GOLEM_HEAD.get().defaultBlockState());
+//        this.blocks.set(27, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(28, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(29, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(30, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(31, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(32, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(33, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(34, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
+//        this.blocks.set(35, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
     }
+
+//    private StoneGolem(Level level, NonNullList<BlockState> blocks) {
+//        super(ScourgeEntities.STONE_GOLEM.get(), level);
+//        this.blocks = blocks;
+//    }
 
     public Iterable<BlockState> getBlocks() {
         return this.blocks;
     }
+
+    public void setBlocks(NonNullList<BlockState> blocks) {this.blocks = blocks;}
 
     public void addAdditionalSaveData (CompoundTag compound) {
         super.addAdditionalSaveData(compound);
