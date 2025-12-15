@@ -31,6 +31,8 @@ public class GolemHeadBlockEntity extends BlockEntity {
             NonNullList<BlockState> blocks = NonNullList.withSize(36, Blocks.AIR.defaultBlockState());
 
 
+
+
             Direction direction = state.getValue(GolemHeadBlock.FACING);
 
             Direction xDir = direction.getOpposite();
@@ -60,15 +62,9 @@ public class GolemHeadBlockEntity extends BlockEntity {
                         }
 
                         blockState = blockState.rotate(level, blockPos, StructureUtils.getRotationForRotationSteps(rotation));
-
-
                         blocks.set(i, blockState);
 
-                        if (i == 2) {
-                            level.setBlockAndUpdate(blockPos, Blocks.REDSTONE_BLOCK.defaultBlockState());
-                        } else {
-                            level.destroyBlock(blockPos, false);
-                        }
+                        level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2 | 16);
 
 
                         i++;
