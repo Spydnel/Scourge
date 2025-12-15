@@ -54,8 +54,8 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
             int y = i / 9;
             int x = (i - y * 9) / 3;
             int z = (i - y * 9 - x * 3);
+            poseStack.translate(x, y, z);
             if (!blockState.isEmpty()) {
-                poseStack.translate(x, y, z);
                 renderBlock(blockState, entity, poseStack, buffer);
             }
             poseStack.translate(-x, -y, -z);

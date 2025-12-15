@@ -30,6 +30,14 @@ public class StoneGolem extends Animal {
     private EatBlockGoal eatBlockGoal;
     private NonNullList<BlockState> blocks;
 
+    public static final EntityDataAccessor<CompoundTag> BLOCKS =
+            SynchedEntityData.defineId(
+                    // The class of the entity.
+                    StoneGolem.class,
+                    // The entity data accessor type.
+                    EntityDataSerializers.COMPOUND_TAG
+            );
+
     public StoneGolem(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
 //        this.blocks = NonNullList.withSize(36, Blocks.STONE.defaultBlockState());
@@ -52,29 +60,57 @@ public class StoneGolem extends Animal {
 //        this.blocks = blocks;
 //    }
 
-    public Iterable<BlockState> getBlocks() {
-        return this.blocks == null ? NonNullList.withSize(36, Blocks.PURPLE_CONCRETE.defaultBlockState()) : this.blocks;
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(BLOCKS, new CompoundTag());
     }
 
-    public void setBlocks(NonNullList<BlockState> blocks) {this.blocks = blocks;}
+    public Iterable<BlockState> getBlocks() {
+        CompoundTag data = this.getEntityData().get(BLOCKS);
+        NonNullList<BlockState> list = NonNullList.withSize(36, Blocks.AIR.defaultBlockState());
+
+        if (data.contains("Blocks")) {
+
+            ListTag listTag = data.getList("Blocks", 10);
+
+            for(int i = 0; i < list.size(); i++) {
+                CompoundTag compoundtag = listTag.getCompound(i);
+                list.set(i, NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), compoundtag));
+            }
+
+
+            return list;
+        }
+
+        return NonNullList.withSize(36, Blocks.MAGENTA_CONCRETE.defaultBlockState());
+    }
+
+    public void setBlocks(NonNullList<BlockState> blocks) {
+        ListTag listtag = new ListTag();
+        Iterator iterator = blocks.iterator();
+
+        while(iterator.hasNext()) {
+            BlockState blockState = (BlockState) iterator.next();
+            if (!blockState.isEmpty()) {
+                listtag.add(NbtUtils.writeBlockState(blockState));
+            } else {
+                listtag.add(new CompoundTag());
+            }
+        }
+
+        CompoundTag newData = new CompoundTag();
+        newData.put("Blocks", listtag);
+        this.getEntityData().set(BLOCKS, newData);
+    }
+
+
 
     public void addAdditionalSaveData (CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-
-        if (this.blocks != null) {
-            ListTag listtag = new ListTag();
-            Iterator iterator = this.blocks.iterator();
-
-            while(iterator.hasNext()) {
-                BlockState blockState = (BlockState) iterator.next();
-                if (!blockState.isEmpty()) {
-                    listtag.add(NbtUtils.writeBlockState(blockState));
-                } else {
-                    listtag.add(new CompoundTag());
-                }
-            }
-
-            compound.put("Blocks", listtag);
+        CompoundTag data = this.getEntityData().get(BLOCKS);
+        if (data.contains("Blocks")) {
+            compound.put("Blocks", data.getList("Blocks", 10));
         }
     }
 
@@ -83,10 +119,9 @@ public class StoneGolem extends Animal {
             ListTag listtag;
             listtag = compound.getList("Blocks", 10);
 
-            for(int i = 0; i < this.blocks.size(); ++i) {
-                CompoundTag compoundtag = listtag.getCompound(i);
-                this.blocks.set(i, NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), compoundtag));
-            }
+            CompoundTag newData = new CompoundTag();
+            newData.put("Blocks", listtag);
+            this.getEntityData().set(BLOCKS, newData);
         }
     }
 

@@ -8,9 +8,11 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
+import net.minecraft.gametest.framework.StructureUtils;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -31,7 +33,7 @@ public class GolemHeadBlockEntity extends BlockEntity {
 
             Direction direction = state.getValue(GolemHeadBlock.FACING);
 
-            Direction xDir = direction;
+            Direction xDir = direction.getOpposite();
             Direction zDir = direction.getClockWise();
             Direction yDir = Direction.UP;
 
@@ -40,15 +42,34 @@ public class GolemHeadBlockEntity extends BlockEntity {
 
             BlockPos blockPos = startPos;
             int i = 0;
-            for (int x = 0; x < 3; x++) {
+            for (int y = 0; y < 4; y++) {
                 for (int z = 0; z < 3 ; z++) {
-                    for (int y = 0; y < 4 ; y++) {
+                    for (int x = 0; x < 3 ; x++) {
                         blockPos = startPos.relative(xDir, x);
-                        blockPos = startPos.relative(zDir, z);
-                        blockPos = startPos.relative(yDir, y);
+                        blockPos = blockPos.relative(zDir, z);
+                        blockPos = blockPos.relative(yDir, y);
 
-                        blocks.set(i, level.getBlockState(blockPos));
-                        level.destroyBlock(blockPos, false);
+                        BlockState blockState = level.getBlockState(blockPos);
+
+                        int rotation = 0;
+
+                        switch (direction) {
+                            case EAST -> rotation = 3;
+                            case SOUTH -> rotation = 2;
+                            case WEST -> rotation = 1;
+                        }
+
+                        blockState = blockState.rotate(level, blockPos, StructureUtils.getRotationForRotationSteps(rotation));
+
+
+                        blocks.set(i, blockState);
+
+                        if (i == 2) {
+                            level.setBlockAndUpdate(blockPos, Blocks.REDSTONE_BLOCK.defaultBlockState());
+                        } else {
+                            level.destroyBlock(blockPos, false);
+                        }
+
 
                         i++;
                     }
