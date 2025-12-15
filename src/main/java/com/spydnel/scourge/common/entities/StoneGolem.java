@@ -33,6 +33,8 @@ public class StoneGolem extends Animal {
     public StoneGolem(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
 //        this.blocks = NonNullList.withSize(36, Blocks.STONE.defaultBlockState());
+//        this.blocks.set(0, Blocks.EMERALD_BLOCK.defaultBlockState());
+//        this.blocks.set(1, Blocks.REDSTONE_BLOCK.defaultBlockState());
 //        this.blocks.set(12, ScourgeBlocks.STONE_GOLEM_HEAD.get().defaultBlockState());
 //        this.blocks.set(27, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
 //        this.blocks.set(28, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
@@ -51,26 +53,29 @@ public class StoneGolem extends Animal {
 //    }
 
     public Iterable<BlockState> getBlocks() {
-        return this.blocks;
+        return this.blocks == null ? NonNullList.withSize(36, Blocks.PURPLE_CONCRETE.defaultBlockState()) : this.blocks;
     }
 
     public void setBlocks(NonNullList<BlockState> blocks) {this.blocks = blocks;}
 
     public void addAdditionalSaveData (CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        ListTag listtag = new ListTag();
-        Iterator iterator = this.blocks.iterator();
 
-        while(iterator.hasNext()) {
-            BlockState blockState = (BlockState) iterator.next();
-            if (!blockState.isEmpty()) {
-                listtag.add(NbtUtils.writeBlockState(blockState));
-            } else {
-                listtag.add(new CompoundTag());
+        if (this.blocks != null) {
+            ListTag listtag = new ListTag();
+            Iterator iterator = this.blocks.iterator();
+
+            while(iterator.hasNext()) {
+                BlockState blockState = (BlockState) iterator.next();
+                if (!blockState.isEmpty()) {
+                    listtag.add(NbtUtils.writeBlockState(blockState));
+                } else {
+                    listtag.add(new CompoundTag());
+                }
             }
-        }
 
-        compound.put("Blocks", listtag);
+            compound.put("Blocks", listtag);
+        }
     }
 
     public void readAdditionalSaveData(CompoundTag compound) {
