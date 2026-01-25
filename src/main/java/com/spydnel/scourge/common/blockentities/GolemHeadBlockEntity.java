@@ -42,6 +42,8 @@ public class GolemHeadBlockEntity extends BlockEntity {
             BlockPos startPos = pos.relative(yDir, -1);
             startPos = startPos.relative(zDir, -1);
 
+            int rotation = 0;
+
             BlockPos blockPos = startPos;
             int i = 0;
             for (int y = 0; y < 4; y++) {
@@ -53,7 +55,7 @@ public class GolemHeadBlockEntity extends BlockEntity {
 
                         BlockState blockState = level.getBlockState(blockPos);
 
-                        int rotation = 0;
+
 
                         switch (direction) {
                             case EAST -> rotation = 3;
@@ -74,7 +76,12 @@ public class GolemHeadBlockEntity extends BlockEntity {
 
             StoneGolem stoneGolem = new StoneGolem(ScourgeEntities.STONE_GOLEM.get(), level);
             stoneGolem.setBlocks(blocks);
-            stoneGolem.setPos(pos.getX(), pos.getY(), pos.getZ());
+            BlockPos entityPos = pos.relative(xDir, 1);
+            stoneGolem.setPos(entityPos.getX() + 0.5, entityPos.getY() -1, entityPos.getZ() + 0.5);
+
+            stoneGolem.setYRot(direction.toYRot());
+
+
 
             level.addFreshEntity(stoneGolem);
         }

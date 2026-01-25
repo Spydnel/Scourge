@@ -22,7 +22,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.Iterator;
 
@@ -30,35 +29,11 @@ public class StoneGolem extends Animal {
     private EatBlockGoal eatBlockGoal;
     private NonNullList<BlockState> blocks;
 
-    public static final EntityDataAccessor<CompoundTag> BLOCKS =
-            SynchedEntityData.defineId(
-                    // The class of the entity.
-                    StoneGolem.class,
-                    // The entity data accessor type.
-                    EntityDataSerializers.COMPOUND_TAG
-            );
+    public static final EntityDataAccessor<CompoundTag> BLOCKS = SynchedEntityData.defineId(StoneGolem.class, EntityDataSerializers.COMPOUND_TAG);
 
     public StoneGolem(EntityType<? extends Animal> entityType, Level level) {
         super(entityType, level);
-//        this.blocks = NonNullList.withSize(36, Blocks.STONE.defaultBlockState());
-//        this.blocks.set(0, Blocks.EMERALD_BLOCK.defaultBlockState());
-//        this.blocks.set(1, Blocks.REDSTONE_BLOCK.defaultBlockState());
-//        this.blocks.set(12, ScourgeBlocks.STONE_GOLEM_HEAD.get().defaultBlockState());
-//        this.blocks.set(27, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(28, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(29, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(30, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(31, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(32, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(33, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(34, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
-//        this.blocks.set(35, ScourgeBlocks.FIELD_LICHEN.get().defaultBlockState());
     }
-
-//    private StoneGolem(Level level, NonNullList<BlockState> blocks) {
-//        super(ScourgeEntities.STONE_GOLEM.get(), level);
-//        this.blocks = blocks;
-//    }
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -151,7 +126,6 @@ public class StoneGolem extends Animal {
         return Mob.createMobAttributes().add(Attributes.MAX_HEALTH, 8.0).add(Attributes.MOVEMENT_SPEED, 0.23000000417232513);
     }
 
-    @Nullable
     @Override
     public AgeableMob getBreedOffspring(ServerLevel serverLevel, AgeableMob ageableMob) {
         return null;
