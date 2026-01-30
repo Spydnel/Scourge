@@ -14,6 +14,10 @@ public class ScourgeBlocks {
             "chiseled_stone",
             () -> new GlazedTerracottaBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)));
 
+    public static final DeferredBlock<GlazedTerracottaBlock> MOSSY_CHISELED_STONE = BLOCKS.register(
+            "mossy_chiseled_stone",
+            () -> new GlazedTerracottaBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)));
+
     public static final DeferredBlock<RotatedPillarBlock> STONE_PILLAR = BLOCKS.register(
             "stone_pillar",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)));

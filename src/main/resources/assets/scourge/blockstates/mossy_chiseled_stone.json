@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "scourge:block/mossy_chiseled_stone_east",
+      "y": 270
+    },
+    "facing=north": {
+      "model": "scourge:block/mossy_chiseled_stone_north",
+      "y": 180
+    },
+    "facing=south": {
+      "model": "scourge:block/mossy_chiseled_stone_south"
+    },
+    "facing=west": {
+      "model": "scourge:block/mossy_chiseled_stone_west",
+      "y": 90
+    }
+  }
+}

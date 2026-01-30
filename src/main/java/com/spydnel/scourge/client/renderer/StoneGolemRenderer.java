@@ -1,6 +1,7 @@
 package com.spydnel.scourge.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Axis;
 import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.client.model.StoneGolemModel;
 import com.spydnel.scourge.client.registry.ScourgeLayers;
@@ -44,11 +45,23 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.pushPose();
-        this.setupRotations(entity, poseStack, 1, entityYaw, partialTicks, 1);
+
+
+
+
+        //poseStack.mulPose(Axis.XP.rotationDegrees(-90.0F));
+        //poseStack.mulPose(Axis.YP.rotationDegrees(180.0F));
+
+        float f = Mth.rotLerp(partialTicks, entity.yBodyRotO, entity.yBodyRot);
+        poseStack.mulPose(Axis.YP.rotationDegrees(180f - f));
+
+        this.getModel().translateToHead(poseStack);
+
+        //poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entity.yBodyRot));
 
         Iterator<BlockState> iterator = entity.getBlocks().iterator();
         int i = 0;
-        poseStack.translate(-1, 0, -1);
+        poseStack.translate(-1, -1.5, -1);
         while(iterator.hasNext()) {
             BlockState blockState = (BlockState) iterator.next();
             int y = i / 9;
