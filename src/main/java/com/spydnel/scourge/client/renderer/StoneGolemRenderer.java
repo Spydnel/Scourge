@@ -43,7 +43,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
     public void render(@NotNull StoneGolem entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
 
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        super.render(entity, 0, partialTicks, poseStack, buffer, packedLight);
         poseStack.pushPose();
 
 
@@ -61,7 +61,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
         Iterator<BlockState> iterator = entity.getBlocks().iterator();
         int i = 0;
-        poseStack.translate(-1, -1.5, -1);
+        poseStack.translate(-1.5, -1.5, -1.5);
         while(iterator.hasNext()) {
             BlockState blockState = (BlockState) iterator.next();
             int y = i / 9;
@@ -69,7 +69,7 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
             int z = (i - y * 9 - x * 3);
             poseStack.translate(x, y, z);
             if (!blockState.isEmpty()) {
-                renderBlock(blockState, entity, poseStack, buffer);
+                renderBlock(blockState, packedLight, poseStack, buffer);
             }
             poseStack.translate(-x, -y, -z);
             i++;
@@ -84,31 +84,8 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
     }
 
-    public void renderBlock(BlockState blockstate, StoneGolem entity, PoseStack poseStack, MultiBufferSource buffer) {
-        if (blockstate.getRenderShape() == RenderShape.MODEL) {
-            Level level = entity.level();
-            if (blockstate != level.getBlockState(entity.blockPosition()) && blockstate.getRenderShape() != RenderShape.INVISIBLE) {
-                BlockPos blockpos = entity.blockPosition().above();
-                poseStack.translate(-0.5, 0.0, -0.5);
-                BakedModel model = this.dispatcher.getBlockModel(blockstate);
-                Iterator var11 = model.getRenderTypes(blockstate, RandomSource.create(blockstate.getSeed(BlockPos.ZERO)), ModelData.EMPTY).iterator();
-                while(var11.hasNext()) {
-                    RenderType renderType = (RenderType)var11.next();
-                    this.dispatcher.getModelRenderer().tesselateBlock(
-                            level,
-                            model,
-                            blockstate,
-                            blockpos,
-                            poseStack,
-                            buffer.getBuffer(RenderTypeHelper.getMovingBlockRenderType(renderType)),
-                            false,
-                            RandomSource.create(),
-                            blockstate.getSeed(BlockPos.ZERO),
-                            OverlayTexture.NO_OVERLAY, ModelData.EMPTY, renderType);
-                }
-                poseStack.translate(0.5, 0.0, 0.5);
-            }
-        }
+    public void renderBlock(BlockState blockstate, int packedLight, PoseStack poseStack, MultiBufferSource buffer) {
+        this.dispatcher.renderSingleBlock(blockstate, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
     }
 
     @Override
