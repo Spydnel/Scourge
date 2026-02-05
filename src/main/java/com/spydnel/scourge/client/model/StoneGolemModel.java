@@ -11,6 +11,7 @@ import net.minecraft.client.model.geom.ModelPart;
 import net.minecraft.client.model.geom.PartPose;
 import net.minecraft.client.model.geom.builders.*;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.animal.allay.Allay;
@@ -57,6 +58,9 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
     }
 
     public void translateToHead(PoseStack poseStack) {
+        //poseStack.translate(root.x / -16f, root.y / -16f, root.z / 16f);
+        poseStack.mulPose((new Quaternionf()).rotationZYX(root.zRot, -root.yRot, -root.xRot));
+
         poseStack.translate(head.x / -16f, head.y / -16f, head.z / 16f);
         poseStack.mulPose((new Quaternionf()).rotationZYX(head.zRot, -head.yRot, -head.xRot));
     }
@@ -74,8 +78,17 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        this.head.yRot = netHeadYaw * 0.017453292F;
-        this.leftArm.xRot = netHeadYaw * -0.005f;
-        this.rightArm.xRot = netHeadYaw * 0.005f;
+        float targetRot = entity.getYHeadRot() * 0.017453292f;
+        float currentRot = Mth.rotLerp(0.007f, root.yRot, targetRot);
+        float currentHeadRot = Mth.rotLerp(0.02f, head.yRot + root.yRot, targetRot);
+
+        this.root.yRot = currentRot;
+        this.head.yRot = currentHeadRot - root.yRot;
+
+        this.leftArm.xRot = head.yRot * 0.2f;
+        this.rightArm.xRot = head.yRot * -0.2f;
+
+        this.leftArm.zRot = Mth.abs(head.yRot) * -0.2f;
+        this.rightArm.zRot = Mth.abs(head.yRot) * 0.2f;
     }
 }
