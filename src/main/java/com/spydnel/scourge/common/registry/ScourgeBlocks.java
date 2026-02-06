@@ -22,6 +22,10 @@ public class ScourgeBlocks {
             "stone_pillar",
             () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)));
 
+    public static final DeferredBlock<RotatedPillarBlock> MOSSY_STONE_PILLAR = BLOCKS.register(
+            "mossy_stone_pillar",
+            () -> new RotatedPillarBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.STONE_BRICKS)));
+
     public static final DeferredBlock<CarpetBlock> FIELD_LICHEN = BLOCKS.register(
             "field_lichen",
             () -> new CarpetBlock(BlockBehaviour.Properties.ofFullCopy(Blocks.MOSS_CARPET).noOcclusion()));

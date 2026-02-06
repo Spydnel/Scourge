@@ -78,17 +78,18 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        float targetRot = entity.getYHeadRot() * 0.017453292f;
-        float currentRot = Mth.rotLerp(0.007f, root.yRot, targetRot);
-        float currentHeadRot = Mth.rotLerp(0.02f, head.yRot + root.yRot, targetRot);
-
-        this.root.yRot = currentRot;
-        this.head.yRot = currentHeadRot - root.yRot;
-
-        this.leftArm.xRot = head.yRot * 0.2f;
-        this.rightArm.xRot = head.yRot * -0.2f;
-
-        this.leftArm.zRot = Mth.abs(head.yRot) * -0.2f;
-        this.rightArm.zRot = Mth.abs(head.yRot) * 0.2f;
+        this.head.yRot = netHeadYaw;
+//        float targetRot = entity.getYHeadRot() * 0.017453292f;
+//        float currentRot = Mth.rotLerp(1, 0, targetRot);
+//        float currentHeadRot = Mth.rotLerp(1, 0, targetRot);
+//
+//        this.root.yRot = currentRot;
+//        this.head.yRot = currentHeadRot - root.yRot;
+//
+//        this.leftArm.xRot = head.yRot * 0.2f;
+//        this.rightArm.xRot = head.yRot * -0.2f;
+//
+//        this.leftArm.zRot = Mth.abs(head.yRot) * -0.2f;
+//        this.rightArm.zRot = Mth.abs(head.yRot) * 0.2f;
     }
 }

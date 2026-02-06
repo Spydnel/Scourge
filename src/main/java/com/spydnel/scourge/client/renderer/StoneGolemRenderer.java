@@ -42,8 +42,8 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
 
 
     public void render(@NotNull StoneGolem entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        entity.yBodyRot = 0;
-        entity.yBodyRotO = 0;
+        //.yBodyRot = 0;
+        //entity.yBodyRotO = 0;
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
         poseStack.pushPose();
 
