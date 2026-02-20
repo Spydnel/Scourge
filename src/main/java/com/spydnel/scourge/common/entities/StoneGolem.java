@@ -46,6 +46,7 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.PathFinder;
+import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.shapes.VoxelShape;
@@ -65,18 +66,36 @@ public class StoneGolem extends PathfinderMob {
 
     public StoneGolem(EntityType<StoneGolem> entityType, Level level) {
         super(entityType, level);
-        this.moveControl = new StoneGolemMoveControl();
+        //this.moveControl = new StoneGolemMoveControl();
+        this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
+        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
 
     }
 
+//    protected PathNavigation createNavigation(Level level) {
+//        return new GroundPathNavigation(this, level) {
+//            protected PathFinder createPathFinder(int p_219479_) {
+//                this.nodeEvaluator = new WalkNodeEvaluator();
+//                this.nodeEvaluator.setCanPassDoors(true);
+//                return new PathFinder(this.nodeEvaluator, p_219479_) {
+//                    protected float distance(Node p_219486_, Node p_219487_) {
+//                        return p_219486_.distanceToXZ(p_219487_);
+//                    }
+//                };
+//            }
+//        };
+//    }
 
+//    protected void playStepSound(BlockPos pos, BlockState block) {
+//        this.playSound(SoundEvents.DEEPSLATE_PLACE, 0.3F, 0.5F);
+//    }
 
-    protected void playStepSound(BlockPos pos, BlockState block) {
-        this.playSound(SoundEvents.DEEPSLATE_PLACE, 0.3F, 0.5F);
+//    @Override
+//    public void checkDespawn() {}
+
+    public boolean removeWhenFarAway(double distanceToClosestPlayer) {
+        return false;
     }
-
-    @Override
-    public void checkDespawn() {}
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
@@ -199,6 +218,7 @@ public class StoneGolem extends PathfinderMob {
     }
 
     public void readAdditionalSaveData(CompoundTag compound) {
+        super.readAdditionalSaveData(compound);
         if (compound.contains("Blocks", 9)) {
             ListTag listtag;
             listtag = compound.getList("Blocks", 10);
@@ -212,60 +232,51 @@ public class StoneGolem extends PathfinderMob {
     protected void registerGoals()
     {
         super.registerGoals();
-        this.goalSelector.addGoal(0, new FloatGoal(this));
-        this.goalSelector.addGoal(4, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(5, new WaterAvoidingRandomStrollGoal(this, 0.4));
-        this.goalSelector.addGoal(6, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        //this.goalSelector.addGoal(0, new FloatGoal(this));
+        //this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0, true));
+        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        //this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
         //this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-        this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        //this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        //this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
 
-    public int getHeadRotSpeed() {
-        return 3;
-    }
+//    public int getHeadRotSpeed() {
+//        return 3;
+//    }
 
-    public void aiStep() {
-        super.aiStep();
-        if (this.isAlive()) {
-
-            if (this.horizontalCollision && EventHooks.canEntityGrief(this.level(), this)) {
-                boolean flag = false;
-                AABB aabb = this.getBoundingBox().inflate(0.2);
-                Iterator var8 = BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ)).iterator();
-
-                label62:
-                while(true) {
-                    BlockPos blockpos;
-                    Block block;
-                    do {
-                        if (!var8.hasNext()) {
-                            if (!flag && this.onGround()) {
-                                this.jumpFromGround();
-                            }
-                            break label62;
-                        }
-
-                        blockpos = (BlockPos)var8.next();
-                        BlockState blockstate = this.level().getBlockState(blockpos);
-                        block = blockstate.getBlock();
-                    } while(!(block instanceof LeavesBlock));
-
-                    flag = this.level().destroyBlock(blockpos, true, this) || flag;
-                }
-            }
-        }
-    }
-
-    class StoneGolemLookControl extends LookControl {
-        StoneGolemLookControl() {
-            super(StoneGolem.this);
-        }
-
-        public void tick() {
-            super.tick();
-        }
-    }
+//    public void aiStep() {
+//        super.aiStep();
+//        if (this.isAlive()) {
+//
+//            if (this.horizontalCollision && EventHooks.canEntityGrief(this.level(), this)) {
+//                boolean flag = false;
+//                AABB aabb = this.getBoundingBox().inflate(0.2);
+//                Iterator var8 = BlockPos.betweenClosed(Mth.floor(aabb.minX), Mth.floor(aabb.minY), Mth.floor(aabb.minZ), Mth.floor(aabb.maxX), Mth.floor(aabb.maxY), Mth.floor(aabb.maxZ)).iterator();
+//
+//                label62:
+//                while(true) {
+//                    BlockPos blockpos;
+//                    Block block;
+//                    do {
+//                        if (!var8.hasNext()) {
+//                            if (!flag && this.onGround()) {
+//                                this.jumpFromGround();
+//                            }
+//                            break label62;
+//                        }
+//
+//                        blockpos = (BlockPos)var8.next();
+//                        BlockState blockstate = this.level().getBlockState(blockpos);
+//                        block = blockstate.getBlock();
+//                    } while(!(block instanceof LeavesBlock));
+//
+//                    flag = this.level().destroyBlock(blockpos, true, this) || flag;
+//                }
+//            }
+//        }
+//    }
 
     class StoneGolemMoveControl extends MoveControl {
         StoneGolemMoveControl() {
@@ -322,6 +333,6 @@ public class StoneGolem extends PathfinderMob {
                 .add(Attributes.MAX_HEALTH, 8.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
                 .add(Attributes.ATTACK_DAMAGE, 1)
-                .add(Attributes.STEP_HEIGHT, 1);
+                .add(Attributes.STEP_HEIGHT, 1.5);
     }
 }

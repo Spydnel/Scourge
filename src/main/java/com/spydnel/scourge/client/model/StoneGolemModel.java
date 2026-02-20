@@ -46,13 +46,17 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
 
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offset(0.0F, -52.0F, 0.0F));
 
-        PartDefinition leftArm = head.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, -6.0F, -8.0F, 12.0F, 52.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(24.0F, -6.0F, 0.0F));
+        PartDefinition leftArm = head.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, -6.0F, -8.0F, 12.0F, 52.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false)
+                .texOffs(0, 76).mirror().addBox(-0.5F, 31.0F, -8.5F, 13.0F, 5.0F, 17.0F, new CubeDeformation(0.0F)).mirror(false)
+                .texOffs(0, 76).mirror().addBox(-0.5F, 11.0F, -8.5F, 13.0F, 5.0F, 17.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(24.0F, -6.0F, 0.0F));
 
-        PartDefinition rightArm = head.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(0, 0).addBox(-12.0F, -6.0F, -8.0F, 12.0F, 52.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(-24.0F, -6.0F, 0.0F));
+        PartDefinition rightArm = head.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(0, 0).addBox(-12.0F, -6.0F, -8.0F, 12.0F, 52.0F, 16.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 76).addBox(-12.5F, 11.0F, -8.5F, 13.0F, 5.0F, 17.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 76).addBox(-12.5F, 31.0F, -8.5F, 13.0F, 5.0F, 17.0F, new CubeDeformation(0.0F)), PartPose.offset(-24.0F, -6.0F, 0.0F));
 
-        PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(64, 32).addBox(-9.0F, -7.0F, -6.0F, 9.0F, 28.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, -21.0F, 0.0F));
+        PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(64, 32).addBox(-9.0F, -3.0F, -6.0F, 9.0F, 23.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, -20.0F, 0.0F));
 
-        PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(64, 32).mirror().addBox(0.0F, -7.0F, -6.0F, 9.0F, 28.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, -21.0F, 0.0F));
+        PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(64, 32).mirror().addBox(0.0F, -3.0F, -6.0F, 9.0F, 23.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, -20.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
@@ -80,18 +84,19 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
 
         this.head.yRot = Mth.clamp(netHeadYaw, -45, 45) * 0.017453292f;
 
-        float speed = 0.9f;
+        float speed = 1f;
 
-        this.rightLeg.xRot = Mth.cos(limbSwing * speed) * 0.8f * limbSwingAmount;
-        this.leftLeg.xRot = -Mth.cos(limbSwing * speed) * 0.8f * limbSwingAmount;
+        this.rightLeg.xRot = Mth.cos(limbSwing * speed) * 0.9f * limbSwingAmount;
+        this.leftLeg.xRot = -Mth.cos(limbSwing * speed) * 0.9f * limbSwingAmount;
 
-        this.rightLeg.y = -21 - ((Mth.sin(limbSwing * speed) * 5f) + 5) * limbSwingAmount;
-        this.leftLeg.y = -21 + ((Mth.sin(limbSwing * speed) * 5f) - 5) * limbSwingAmount;
+        this.rightLeg.y = -20 - ((Mth.sin(limbSwing * speed) * 7f) + 7) * limbSwingAmount;
+        this.leftLeg.y = -20 + ((Mth.sin(limbSwing * speed) * 7f) - 7) * limbSwingAmount;
 
-        this.rightLeg.z = 0 + Mth.cos(limbSwing * speed) * 10f * limbSwingAmount;
-        this.leftLeg.z = 0 - Mth.cos(limbSwing * speed) * 10f * limbSwingAmount;
+        this.rightLeg.z = 0 + Mth.cos((limbSwing * speed)) * 7f * limbSwingAmount;
+        this.leftLeg.z = 0 - Mth.cos((limbSwing * speed)) * 7f * limbSwingAmount;
 
         this.root.zRot = Mth.cos(limbSwing * speed) * 0.1f * limbSwingAmount;
+        this.head.y = -52 + ((Mth.cos(limbSwing * speed * 2) * 1.5f) + 1.5f) * limbSwingAmount;
 
         this.rightArm.xRot = - ((Mth.cos(limbSwing * speed) * 0.3f) - 0.5f) * limbSwingAmount;
         this.leftArm.xRot = ((Mth.cos(limbSwing * speed) * 0.3f) + 0.5f) * limbSwingAmount;
