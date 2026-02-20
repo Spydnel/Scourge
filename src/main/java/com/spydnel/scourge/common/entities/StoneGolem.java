@@ -66,7 +66,7 @@ public class StoneGolem extends PathfinderMob {
 
     public StoneGolem(EntityType<StoneGolem> entityType, Level level) {
         super(entityType, level);
-        //this.moveControl = new StoneGolemMoveControl();
+        this.moveControl = new StoneGolemMoveControl();
         this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
         this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
 
@@ -232,14 +232,13 @@ public class StoneGolem extends PathfinderMob {
     protected void registerGoals()
     {
         super.registerGoals();
-        //this.goalSelector.addGoal(0, new FloatGoal(this));
-        //this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(7, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
-        //this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        //this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-        //this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        //this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        this.goalSelector.addGoal(0, new FloatGoal(this));
+        this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0, true));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
+        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
 
 //    public int getHeadRotSpeed() {
