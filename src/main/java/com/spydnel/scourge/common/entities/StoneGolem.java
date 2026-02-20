@@ -1,7 +1,11 @@
 package com.spydnel.scourge.common.entities;
 
-import net.minecraft.core.BlockPos;
-import net.minecraft.core.NonNullList;
+import com.mojang.datafixers.util.Pair;
+import com.spydnel.scourge.Scourge;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
+import net.minecraft.core.*;
+import net.minecraft.core.particles.ParticleTypes;
+import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
@@ -9,19 +13,25 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
+import net.minecraft.resources.ResourceKey;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.attributes.AttributeSupplier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.ai.control.LookControl;
+import net.minecraft.world.entity.ai.control.MoveControl;
 import net.minecraft.world.entity.ai.goal.*;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.entity.ai.navigation.GroundPathNavigation;
 import net.minecraft.world.entity.ai.navigation.PathNavigation;
 import net.minecraft.world.entity.animal.IronGolem;
+import net.minecraft.world.entity.animal.camel.Camel;
 import net.minecraft.world.entity.npc.AbstractVillager;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
@@ -29,33 +39,53 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
 import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.Node;
 import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.shapes.VoxelShape;
+import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.EventHooks;
 
 import java.util.Iterator;
+import java.util.List;
+import java.util.Optional;
 
 public class StoneGolem extends PathfinderMob {
     private EatBlockGoal eatBlockGoal;
     private NonNullList<BlockState> blocks;
 
     public static final EntityDataAccessor<CompoundTag> BLOCKS = SynchedEntityData.defineId(StoneGolem.class, EntityDataSerializers.COMPOUND_TAG);
+    //public static final EntityDataAccessor<CompoundTag> BLOCK_ENTITIES = SynchedEntityData.defineId(StoneGolem.class, EntityDataSerializers.COMPOUND_TAG);
 
     public StoneGolem(EntityType<StoneGolem> entityType, Level level) {
         super(entityType, level);
+        this.moveControl = new StoneGolemMoveControl();
+
     }
+
+
+
+    protected void playStepSound(BlockPos pos, BlockState block) {
+        this.playSound(SoundEvents.DEEPSLATE_PLACE, 0.3F, 0.5F);
+    }
+
+    @Override
+    public void checkDespawn() {}
 
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         super.defineSynchedData(builder);
         builder.define(BLOCKS, new CompoundTag());
+        //builder.define(BLOCK_ENTITIES, new CompoundTag());
     }
 
-    public Iterable<BlockState> getBlocks() {
+    public List<BlockState> getBlocks() {
         CompoundTag data = this.getEntityData().get(BLOCKS);
         NonNullList<BlockState> list = NonNullList.withSize(36, Blocks.AIR.defaultBlockState());
 
@@ -93,6 +123,71 @@ public class StoneGolem extends PathfinderMob {
         this.getEntityData().set(BLOCKS, newData);
     }
 
+//    public List<BlockEntity> getBlockEntities() {
+//        List<BlockState> blockStates = this.getBlocks();
+//
+//        CompoundTag data = this.getEntityData().get(BLOCKS);
+//        BlockEntity[] list = new BlockEntity[36];
+//
+//        if (data.contains("BlockEntities")) {
+//
+//            ListTag listTag = data.getList("BlockEntities", 10);
+//
+//            for(int i = 0; i < list.length; i++) {
+//                BlockState b = blockStates.get(i);
+//                if (b.hasBlockEntity()) {
+//                    list[i] = ((EntityBlock)b.getBlock()).newBlockEntity(BlockPos.ZERO, b);
+//                }
+//            }
+//
+//
+//            return List.of(list);
+//        }
+//        return List.of();
+//    }
+//
+//    public void setBlockEntities(NonNullList<BlockEntity> blockEntities) {
+//        ListTag listtag = new ListTag();
+//        Iterator iterator = blockEntities.iterator();
+//
+//        while(iterator.hasNext()) {
+//            BlockEntity blockEntity = (BlockEntity) iterator.next();
+//            if (blockEntity != null) {
+//                listtag.add(blockEntity.getPersistentData());
+//            } else {
+//                listtag.add(new CompoundTag());
+//            }
+//        }
+//
+//        CompoundTag newData = new CompoundTag();
+//        newData.put("BlockEntities", listtag);
+//        this.getEntityData().set(BLOCKS, newData);
+//    }
+
+//    private static CompoundTag writeBlockEntity(BlockEntity blockEntity) {
+//        CompoundTag compoundtag = new CompoundTag();
+////        compoundtag.putString("Name", BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType()).toString());
+//        compoundtag.put("Data", blockEntity.getPersistentData());
+//
+//        return compoundtag;
+//    }
+//
+//    private static BlockEntity readBlockEntity(CompoundTag tag) {
+////        if (!tag.contains("Name")) {
+////            return null;
+////        }
+////        ResourceLocation resourceLocation = ResourceLocation.parse(tag.getString("Name"));
+////        Optional<? extends Holder<BlockEntityType<?>>> optional = blockEntityGetter.get(ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, resourceLocation));
+////        if (optional.isEmpty()) {
+////            return null;
+////        } else {
+////            BlockEntityType<?> blockEntityType = optional.get().value();
+////            CompoundTag compoundTag = tag.getCompound("Data");
+////            return new Pair<BlockEntityType<?>, CompoundTag>(blockEntityType, compoundTag);
+////        }
+//
+//    }
+
 
 
     public void addAdditionalSaveData (CompoundTag compound) {
@@ -124,6 +219,10 @@ public class StoneGolem extends PathfinderMob {
         //this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
         this.targetSelector.addGoal(3, new NearestAttackableTargetGoal<>(this, Player.class, true));
         this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+    }
+
+    public int getHeadRotSpeed() {
+        return 3;
     }
 
     public void aiStep() {
@@ -158,6 +257,50 @@ public class StoneGolem extends PathfinderMob {
         }
     }
 
+    class StoneGolemLookControl extends LookControl {
+        StoneGolemLookControl() {
+            super(StoneGolem.this);
+        }
+
+        public void tick() {
+            super.tick();
+        }
+    }
+
+    class StoneGolemMoveControl extends MoveControl {
+        StoneGolemMoveControl() {
+            super(StoneGolem.this);
+        }
+
+        public void tick() {
+            if (this.operation == MoveControl.Operation.MOVE_TO) {
+                this.operation = MoveControl.Operation.WAIT;
+                double d0 = this.wantedX - this.mob.getX();
+                double d1 = this.wantedZ - this.mob.getZ();
+                double d2 = this.wantedY - this.mob.getY();
+                double d3 = d0 * d0 + d2 * d2 + d1 * d1;
+                if (d3 < 2.500000277905201E-7) {
+                    this.mob.setZza(0.0F);
+                    return;
+                }
+
+                float f9 = (float) (Mth.atan2(d1, d0) * 180.0 / 3.1415927410125732) - 90.0F;
+                // alignment = (180 - Mth.degreesDifferenceAbs(this.mob.getYRot(), f9)) / 180;
+                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 5));
+                this.mob.setSpeed((float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
+                BlockPos blockpos = this.mob.blockPosition();
+                BlockState blockstate = this.mob.level().getBlockState(blockpos);
+                VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level(), blockpos);
+                if (d2 > (double) this.mob.maxUpStep() && d0 * d0 + d1 * d1 < (double) Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES)) {
+                    this.mob.getJumpControl().jump();
+                    this.operation = MoveControl.Operation.JUMPING;
+                }
+            } else {
+                super.tick();
+            }
+        }
+    }
+
 
 //    public int getHeadRotSpeed() {
 //        return 0;
@@ -178,6 +321,7 @@ public class StoneGolem extends PathfinderMob {
         return Mob.createMobAttributes()
                 .add(Attributes.MAX_HEALTH, 8.0)
                 .add(Attributes.MOVEMENT_SPEED, 0.2)
-                .add(Attributes.ATTACK_DAMAGE, 1);
+                .add(Attributes.ATTACK_DAMAGE, 1)
+                .add(Attributes.STEP_HEIGHT, 1);
     }
 }

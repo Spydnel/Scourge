@@ -46,13 +46,13 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
 
         PartDefinition head = root.addOrReplaceChild("head", CubeListBuilder.create(), PartPose.offset(0.0F, -52.0F, 0.0F));
 
-        PartDefinition leftArm = head.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, -12.0F, -8.0F, 16.0F, 60.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(24.0F, 4.0F, 0.0F));
+        PartDefinition leftArm = head.addOrReplaceChild("leftArm", CubeListBuilder.create().texOffs(0, 0).mirror().addBox(0.0F, -6.0F, -8.0F, 12.0F, 52.0F, 16.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(24.0F, -6.0F, 0.0F));
 
-        PartDefinition rightArm = head.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(0, 0).addBox(-16.0F, -12.0F, -8.0F, 16.0F, 60.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(-24.0F, 4.0F, 0.0F));
+        PartDefinition rightArm = head.addOrReplaceChild("rightArm", CubeListBuilder.create().texOffs(0, 0).addBox(-12.0F, -6.0F, -8.0F, 12.0F, 52.0F, 16.0F, new CubeDeformation(0.0F)), PartPose.offset(-24.0F, -6.0F, 0.0F));
 
-        PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(64, 32).addBox(-9.0F, -11.0F, -6.0F, 9.0F, 28.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, -17.0F, 0.0F));
+        PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(64, 32).addBox(-9.0F, -7.0F, -6.0F, 9.0F, 28.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, -21.0F, 0.0F));
 
-        PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(64, 32).mirror().addBox(0.0F, -11.0F, -6.0F, 9.0F, 28.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, -17.0F, 0.0F));
+        PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(64, 32).mirror().addBox(0.0F, -7.0F, -6.0F, 9.0F, 28.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, -21.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
@@ -78,7 +78,26 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        this.head.yRot = netHeadYaw;
+        this.head.yRot = Mth.clamp(netHeadYaw, -45, 45) * 0.017453292f;
+
+        float speed = 0.9f;
+
+        this.rightLeg.xRot = Mth.cos(limbSwing * speed) * 0.8f * limbSwingAmount;
+        this.leftLeg.xRot = -Mth.cos(limbSwing * speed) * 0.8f * limbSwingAmount;
+
+        this.rightLeg.y = -21 - ((Mth.sin(limbSwing * speed) * 5f) + 5) * limbSwingAmount;
+        this.leftLeg.y = -21 + ((Mth.sin(limbSwing * speed) * 5f) - 5) * limbSwingAmount;
+
+        this.rightLeg.z = 0 + Mth.cos(limbSwing * speed) * 10f * limbSwingAmount;
+        this.leftLeg.z = 0 - Mth.cos(limbSwing * speed) * 10f * limbSwingAmount;
+
+        this.root.zRot = Mth.cos(limbSwing * speed) * 0.1f * limbSwingAmount;
+
+        this.rightArm.xRot = - ((Mth.cos(limbSwing * speed) * 0.3f) - 0.5f) * limbSwingAmount;
+        this.leftArm.xRot = ((Mth.cos(limbSwing * speed) * 0.3f) + 0.5f) * limbSwingAmount;
+
+        this.leftArm.zRot = -0.1f;
+        this.rightArm.zRot = 0.1f;
 //        float targetRot = entity.getYHeadRot() * 0.017453292f;
 //        float currentRot = Mth.rotLerp(1, 0, targetRot);
 //        float currentHeadRot = Mth.rotLerp(1, 0, targetRot);

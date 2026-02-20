@@ -6,38 +6,43 @@ import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.client.model.StoneGolemModel;
 import com.spydnel.scourge.client.registry.ScourgeLayers;
 import com.spydnel.scourge.common.entities.StoneGolem;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.model.geom.EntityModelSet;
+import net.minecraft.client.renderer.BlockEntityWithoutLevelRenderer;
 import net.minecraft.client.renderer.MultiBufferSource;
-import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BellRenderer;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.client.resources.model.BakedModel;
 import net.minecraft.core.BlockPos;
-import net.minecraft.nbt.CompoundTag;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
-import net.minecraft.util.RandomSource;
-import net.minecraft.world.item.BlockItem;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.entity.BellBlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
-import net.neoforged.neoforge.client.RenderTypeHelper;
-import net.neoforged.neoforge.client.model.data.ModelData;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Iterator;
 
 @OnlyIn(Dist.CLIENT)
 public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<StoneGolem>> {
-    private final BlockRenderDispatcher dispatcher;
+    private final BlockRenderDispatcher blockRenderDispatcher;
+    private final BlockEntityRenderDispatcher blockEntityRenderDispatcher;
+    private final BellBlockEntity bellBlockEntity;
 
     public StoneGolemRenderer(EntityRendererProvider.Context context) {
         super(context, new StoneGolemModel<>(context.bakeLayer(ScourgeLayers.STONE_GOLEM_LAYER)), 1);
-        this.dispatcher = context.getBlockRenderDispatcher();
+        this.blockRenderDispatcher = context.getBlockRenderDispatcher();
+        this.bellBlockEntity = new BellBlockEntity(BlockPos.ZERO, Blocks.BELL.defaultBlockState());
+        this.blockEntityRenderDispatcher = Minecraft.getInstance().getBlockEntityRenderDispatcher();
+
+
     }
 
 
@@ -86,11 +91,21 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
     }
 
     public void renderBlock(BlockState blockstate, int packedLight, PoseStack poseStack, MultiBufferSource buffer) {
-        this.dispatcher.renderSingleBlock(blockstate, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
+        if (blockstate.getBlock() instanceof EntityBlock) {
+            BlockEntity blockEntity = ((EntityBlock) blockstate.getBlock()).newBlockEntity(BlockPos.ZERO, blockstate);
+            blockEntityRenderDispatcher.renderItem(blockEntity, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
+        }
+        this.blockRenderDispatcher.renderSingleBlock(blockstate, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
     }
 
     @Override
     public @NotNull ResourceLocation getTextureLocation(StoneGolem stoneGolem) {
         return ResourceLocation.fromNamespaceAndPath(Scourge.MODID, "textures/entity/stone_golem.png");
     }
+
+//    public class GolemBlockEntityRenderer extends BlockEntityWithoutLevelRenderer {
+//        public GolemBlockEntityRenderer(BlockEntityRenderDispatcher blockEntityRenderDispatcher, EntityModelSet entityModelSet) {
+//            super(Minecraft.getInstance().getBlockEntityRenderDispatcher(), Minecraft.getInstance().getEntityModels());
+//        }
+//    }
 }
