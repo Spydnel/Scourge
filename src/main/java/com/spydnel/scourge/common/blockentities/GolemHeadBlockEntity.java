@@ -1,5 +1,6 @@
 package com.spydnel.scourge.common.blockentities;
 
+import com.mojang.datafixers.util.Pair;
 import com.spydnel.scourge.common.blocks.GolemHeadBlock;
 import com.spydnel.scourge.common.entities.StoneGolem;
 import com.spydnel.scourge.common.registry.ScourgeBlockEntities;
@@ -18,17 +19,35 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class GolemHeadBlockEntity extends BlockEntity {
+
+    public boolean activated;
+    public List<BlockPos> toRemove;
+
     public GolemHeadBlockEntity( BlockPos pos, BlockState blockState) {
         super(ScourgeBlockEntities.STONE_GOLEM_HEAD.get(), pos, blockState);
+        this.activated = false;
+        this.toRemove = new ArrayList<BlockPos>();
     }
 
-    public static <T extends BlockEntity> void tick(Level level, BlockPos pos, BlockState state, T blockEntity) {
-        if (level.hasNearbyAlivePlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2))
+    public static void tick(Level level, BlockPos pos, BlockState state, GolemHeadBlockEntity blockEntity) {
+
+        if (blockEntity.activated) {
+            blockEntity.toRemove.forEach((b) -> {
+                level.setBlock(b, Blocks.AIR.defaultBlockState(), 2 | 16);
+            });
+        }
+
+        if (level.hasNearbyAlivePlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2) && !blockEntity.activated)
         {
             //level.setBlockAndUpdate(pos, Blocks.REDSTONE_BLOCK.defaultBlockState());
 
-            NonNullList<BlockState> blocks = NonNullList.withSize(36, Blocks.AIR.defaultBlockState());
+            blockEntity.activated = true;
+
+            NonNullList<Pair<BlockState, BlockEntity>> blocks = NonNullList.withSize(36, Pair.of(Blocks.AIR.defaultBlockState(), null));
 
 
 
@@ -54,6 +73,14 @@ public class GolemHeadBlockEntity extends BlockEntity {
                         blockPos = blockPos.relative(yDir, y);
 
                         BlockState blockState = level.getBlockState(blockPos);
+                        BlockEntity blockEntity1;
+
+                        if (blockState.hasBlockEntity()) {
+                            blockEntity1 = level.getBlockEntity(blockPos);
+                        } else {
+                            blockEntity1 = null;
+                        }
+
 
 
 
@@ -64,10 +91,11 @@ public class GolemHeadBlockEntity extends BlockEntity {
                         }
 
                         blockState = blockState.rotate(level, blockPos, StructureUtils.getRotationForRotationSteps(rotation));
-                        blocks.set(i, blockState);
+                        blocks.set(i, Pair.of(blockState, blockEntity1));
 
-                        level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2 | 16);
+                        //level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 2 | 16);
 
+                        ((GolemHeadBlockEntity) blockEntity).toRemove.add(blockPos);
 
                         i++;
                     }
@@ -78,10 +106,8 @@ public class GolemHeadBlockEntity extends BlockEntity {
             stoneGolem.setBlocks(blocks);
             BlockPos entityPos = pos.relative(xDir, 1);
             stoneGolem.setPos(entityPos.getX() + 0.5, entityPos.getY() -1, entityPos.getZ() + 0.5);
-
             stoneGolem.setYRot(direction.toYRot());
-
-
+            stoneGolem.yHeadRot = stoneGolem.getYRot();
 
             level.addFreshEntity(stoneGolem);
         }

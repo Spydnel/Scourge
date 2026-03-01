@@ -1,6 +1,7 @@
 package com.spydnel.scourge.client.renderer;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.datafixers.util.Pair;
 import com.mojang.math.Axis;
 import com.spydnel.scourge.Scourge;
 import com.spydnel.scourge.client.model.StoneGolemModel;
@@ -13,6 +14,7 @@ import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.block.BlockRenderDispatcher;
 import net.minecraft.client.renderer.blockentity.BellRenderer;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderDispatcher;
+import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.entity.MobRenderer;
 import net.minecraft.client.renderer.texture.OverlayTexture;
@@ -21,6 +23,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.EntityBlock;
+import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BellBlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
@@ -64,37 +67,46 @@ public class StoneGolemRenderer extends MobRenderer<StoneGolem, StoneGolemModel<
         this.getModel().translateToHead(poseStack);
 
         //poseStack.mulPose(Axis.YP.rotationDegrees(180.0F - entity.yBodyRot));
+        if (entity.getBlocks() != null) {
+            //Scourge.LOGGER.debug(entity.getBlocks().toString());
+            Iterator<Pair<BlockState, BlockEntity>> iterator = entity.getBlocks().iterator();
+            int i = 0;
 
-        Iterator<BlockState> iterator = entity.getBlocks().iterator();
-        int i = 0;
-        poseStack.translate(-1.5, -1.5, -1.5);
-        while(iterator.hasNext()) {
-            BlockState blockState = (BlockState) iterator.next();
-            int y = i / 9;
-            int x = (i - y * 9) / 3;
-            int z = (i - y * 9 - x * 3);
-            poseStack.translate(x, y, z);
-            if (!blockState.isEmpty()) {
-                renderBlock(blockState, packedLight, poseStack, buffer);
+            poseStack.translate(-1.5, -1.5, -1.5);
+            while(iterator.hasNext()) {
+                poseStack.pushPose();
+                Pair<BlockState, BlockEntity> pair = iterator.next();
+                BlockState blockState = pair.getFirst();
+                BlockEntity blockEntity = pair.getSecond();
+                int y = i / 9;
+                int x = (i - y * 9) / 3;
+                int z = (i - y * 9 - x * 3);
+                poseStack.translate(x, y, z);
+                if (!blockState.isEmpty() && blockState.getRenderShape() != RenderShape.ENTITYBLOCK_ANIMATED) {
+                    renderBlock(blockState, packedLight, poseStack, buffer);
+                }
+                if (blockEntity != null) {
+                    renderBlockEntity(blockEntity, poseStack, buffer, packedLight);
+                }
+                poseStack.popPose();
+                i++;
             }
-            poseStack.translate(-x, -y, -z);
-            i++;
+        } else  {
+            //Scourge.LOGGER.debug("null");
         }
-
-
-
-
-
-
         poseStack.popPose();
 
     }
 
-    public void renderBlock(BlockState blockstate, int packedLight, PoseStack poseStack, MultiBufferSource buffer) {
-        if (blockstate.getBlock() instanceof EntityBlock) {
-            BlockEntity blockEntity = ((EntityBlock) blockstate.getBlock()).newBlockEntity(BlockPos.ZERO, blockstate);
-            blockEntityRenderDispatcher.renderItem(blockEntity, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
+    public void renderBlockEntity(BlockEntity blockEntity, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
+       //this.blockEntityRenderDispatcher.renderItem(blockEntity, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
+        BlockEntityRenderer renderer = this.blockEntityRenderDispatcher.getRenderer(blockEntity);
+        if (renderer != null) {
+            renderer.render(blockEntity, 0, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
         }
+    }
+
+    public void renderBlock(BlockState blockstate, int packedLight, PoseStack poseStack, MultiBufferSource buffer) {
         this.blockRenderDispatcher.renderSingleBlock(blockstate, poseStack, buffer, packedLight, OverlayTexture.NO_OVERLAY);
     }
 

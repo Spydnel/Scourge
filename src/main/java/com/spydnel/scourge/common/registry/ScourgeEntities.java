@@ -18,7 +18,7 @@ public class ScourgeEntities {
 
     public static final Supplier<EntityType<StoneGolem>> STONE_GOLEM = ENTITIES.register(
             "stone_golem",
-            () -> EntityType.Builder.of(StoneGolem::new, MobCategory.MISC).sized(0.6f, 1f)
+            () -> EntityType.Builder.of(StoneGolem::new, MobCategory.MISC).sized(2.8f, 4f)
                     .build("stone_golem"));
 
 

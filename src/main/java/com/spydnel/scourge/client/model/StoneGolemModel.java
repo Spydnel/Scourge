@@ -14,6 +14,7 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.entity.animal.allay.Allay;
 import net.neoforged.api.distmarker.Dist;
 import net.neoforged.api.distmarker.OnlyIn;
@@ -82,27 +83,35 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
 
-        this.head.yRot = Mth.clamp(netHeadYaw, -45, 45) * 0.017453292f;
+        if (entity.getPose() != Pose.SITTING) {
+            this.head.yRot = Mth.clamp(netHeadYaw, -45, 45) * 0.017453292f;
 
-        float speed = 1f;
+            float speed = 1.1f;
 
-        this.rightLeg.xRot = Mth.cos(limbSwing * speed) * 0.9f * limbSwingAmount;
-        this.leftLeg.xRot = -Mth.cos(limbSwing * speed) * 0.9f * limbSwingAmount;
+            this.rightLeg.xRot = Mth.cos(limbSwing * speed) * 0.9f * limbSwingAmount;
+            this.leftLeg.xRot = -Mth.cos(limbSwing * speed) * 0.9f * limbSwingAmount;
 
-        this.rightLeg.y = -20 - ((Mth.sin(limbSwing * speed) * 7f) + 7) * limbSwingAmount;
-        this.leftLeg.y = -20 + ((Mth.sin(limbSwing * speed) * 7f) - 7) * limbSwingAmount;
+            this.rightLeg.y = -20 - ((Mth.sin(limbSwing * speed) * 7f) + 7) * limbSwingAmount;
+            this.leftLeg.y = -20 + ((Mth.sin(limbSwing * speed) * 7f) - 7) * limbSwingAmount;
 
-        this.rightLeg.z = 0 + Mth.cos((limbSwing * speed)) * 7f * limbSwingAmount;
-        this.leftLeg.z = 0 - Mth.cos((limbSwing * speed)) * 7f * limbSwingAmount;
+            this.rightLeg.z = 0 + Mth.cos((limbSwing * speed)) * 7f * limbSwingAmount;
+            this.leftLeg.z = 0 - Mth.cos((limbSwing * speed)) * 7f * limbSwingAmount;
 
-        this.root.zRot = Mth.cos(limbSwing * speed) * 0.1f * limbSwingAmount;
-        this.head.y = -52 + ((Mth.cos(limbSwing * speed * 2) * 1.5f) + 1.5f) * limbSwingAmount;
+            this.root.zRot = Mth.cos(limbSwing * speed) * 0.1f * limbSwingAmount;
+            this.head.y = -52 + ((Mth.cos(limbSwing * speed * 2) * 1.5f) + 1.5f) * limbSwingAmount;
 
-        this.rightArm.xRot = - ((Mth.cos(limbSwing * speed) * 0.3f) - 0.5f) * limbSwingAmount;
-        this.leftArm.xRot = ((Mth.cos(limbSwing * speed) * 0.3f) + 0.5f) * limbSwingAmount;
+            this.rightArm.xRot = - ((Mth.cos(limbSwing * speed) * 0.3f) - 0.5f) * limbSwingAmount;
+            this.leftArm.xRot = ((Mth.cos(limbSwing * speed) * 0.3f) + 0.5f) * limbSwingAmount;
 
-        this.leftArm.zRot = -0.1f;
-        this.rightArm.zRot = 0.1f;
+            this.leftArm.zRot = -0.1f;
+            this.rightArm.zRot = 0.1f;
+        } else {
+            this.head.y = -24;
+            this.leftArm.visible = false;
+            this.rightArm.visible = false;
+        }
+
+
 //        float targetRot = entity.getYHeadRot() * 0.017453292f;
 //        float currentRot = Mth.rotLerp(1, 0, targetRot);
 //        float currentHeadRot = Mth.rotLerp(1, 0, targetRot);
