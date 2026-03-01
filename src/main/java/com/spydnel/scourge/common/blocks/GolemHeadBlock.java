@@ -54,6 +54,11 @@ public class GolemHeadBlock extends HorizontalDirectionalBlock implements Entity
         // You can return different tickers here, depending on whatever factors you want. A common use case would be
         // to return different tickers on the client or server, only tick one side to begin with,
         // or only return a ticker for some blockstates (e.g. when using a "my machine is working" blockstate property).
-        return type == ScourgeBlockEntities.STONE_GOLEM_HEAD.get() ? (BlockEntityTicker<T>) GolemHeadBlockEntity::tick : null;
+        return createTickerHelper(type, ScourgeBlockEntities.STONE_GOLEM_HEAD.get(), GolemHeadBlockEntity::tick);
+    }
+
+    @javax.annotation.Nullable
+    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> serverType, BlockEntityType<E> clientType, BlockEntityTicker<? super E> ticker) {
+        return clientType == serverType ? (BlockEntityTicker<A>) ticker : null;
     }
 }

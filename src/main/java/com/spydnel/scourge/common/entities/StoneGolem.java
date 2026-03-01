@@ -37,10 +37,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.raid.Raider;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.LeavesBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
@@ -59,7 +56,9 @@ import java.util.Optional;
 
 public class StoneGolem extends PathfinderMob {
     private EatBlockGoal eatBlockGoal;
-    private NonNullList<BlockState> blocks;
+    private NonNullList<Pair<BlockState, BlockEntity>> blocks;
+
+    //private List<BlockEntity> blockEntities;
 
     public static final EntityDataAccessor<CompoundTag> BLOCKS = SynchedEntityData.defineId(StoneGolem.class, EntityDataSerializers.COMPOUND_TAG);
     //public static final EntityDataAccessor<CompoundTag> BLOCK_ENTITIES = SynchedEntityData.defineId(StoneGolem.class, EntityDataSerializers.COMPOUND_TAG);
@@ -67,31 +66,13 @@ public class StoneGolem extends PathfinderMob {
     public StoneGolem(EntityType<StoneGolem> entityType, Level level) {
         super(entityType, level);
         this.moveControl = new StoneGolemMoveControl();
-        this.setPathfindingMalus(PathType.DANGER_FIRE, 16.0F);
-        this.setPathfindingMalus(PathType.DAMAGE_FIRE, -1.0F);
-
+        this.lookControl = new StoneGolemLookControl();
+        this.setPose(Pose.SITTING);
     }
 
-//    protected PathNavigation createNavigation(Level level) {
-//        return new GroundPathNavigation(this, level) {
-//            protected PathFinder createPathFinder(int p_219479_) {
-//                this.nodeEvaluator = new WalkNodeEvaluator();
-//                this.nodeEvaluator.setCanPassDoors(true);
-//                return new PathFinder(this.nodeEvaluator, p_219479_) {
-//                    protected float distance(Node p_219486_, Node p_219487_) {
-//                        return p_219486_.distanceToXZ(p_219487_);
-//                    }
-//                };
-//            }
-//        };
-//    }
-
-//    protected void playStepSound(BlockPos pos, BlockState block) {
-//        this.playSound(SoundEvents.DEEPSLATE_PLACE, 0.3F, 0.5F);
-//    }
-
-//    @Override
-//    public void checkDespawn() {}
+    protected void playStepSound(BlockPos pos, BlockState block) {
+        this.playSound(SoundEvents.DEEPSLATE_PLACE, 0.3F, 0.5F);
+    }
 
     public boolean removeWhenFarAway(double distanceToClosestPlayer) {
         return false;
@@ -104,116 +85,77 @@ public class StoneGolem extends PathfinderMob {
         //builder.define(BLOCK_ENTITIES, new CompoundTag());
     }
 
-    public List<BlockState> getBlocks() {
-        CompoundTag data = this.getEntityData().get(BLOCKS);
-        NonNullList<BlockState> list = NonNullList.withSize(36, Blocks.AIR.defaultBlockState());
-
-        if (data.contains("Blocks")) {
-
-            ListTag listTag = data.getList("Blocks", 10);
-
-            for(int i = 0; i < list.size(); i++) {
-                CompoundTag compoundtag = listTag.getCompound(i);
-                list.set(i, NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), compoundtag));
-            }
-
-
-            return list;
+    public NonNullList<Pair<BlockState, BlockEntity>> getBlocks() {
+        if (this.blocks == null) {
+            this.blocks = readBlocks(this.entityData.get(BLOCKS));
         }
-
-        return NonNullList.withSize(36, Blocks.MAGENTA_CONCRETE.defaultBlockState());
+        return this.blocks;
     }
 
-    public void setBlocks(NonNullList<BlockState> blocks) {
-        ListTag listtag = new ListTag();
-        Iterator iterator = blocks.iterator();
+    public void setBlocks(NonNullList<Pair<BlockState, BlockEntity>> blocks) {
+        this.entityData.set(BLOCKS, writeBlocks(blocks));
+    }
+
+    private NonNullList<Pair<BlockState, BlockEntity>> readBlocks(CompoundTag compound) {
+        NonNullList<Pair<BlockState, BlockEntity>> list = NonNullList.withSize(36, Pair.of(Blocks.AIR.defaultBlockState(), null));
+
+        if (compound.contains("Blocks")) {
+
+            ListTag listTag = compound.getList("Blocks", 10);
+            //ListTag blockEntityList = compound.getList("BlockEntities", 10);
+
+            for(int i = 0; i < list.size(); i++) {
+                CompoundTag pair = listTag.getCompound(i);
+                BlockState blockState;
+                BlockEntity blockEntity;
+
+                if (pair.contains("Block")) {
+                    blockState = NbtUtils.readBlockState(this.level().holderLookup(Registries.BLOCK), pair.getCompound("Block"));
+                } else {
+                    blockState = Blocks.AIR.defaultBlockState();
+                }
+
+                if (pair.contains("BlockEntity")) {
+                    blockEntity = BlockEntity.loadStatic(BlockPos.ZERO, blockState, pair.getCompound("BlockEntity"), this.level().registryAccess());
+                    blockEntity.setLevel(this.level());
+                } else {
+                    blockEntity = null;
+                }
+
+                list.set(i, Pair.of(blockState, blockEntity));
+            }
+        }
+
+        return list;
+    }
+
+    private CompoundTag writeBlocks(NonNullList<Pair<BlockState, BlockEntity>> blocks) {
+        ListTag listTag = new ListTag();
+        Iterator<Pair<BlockState, BlockEntity>> iterator = blocks.iterator();
 
         while(iterator.hasNext()) {
-            BlockState blockState = (BlockState) iterator.next();
-            if (!blockState.isEmpty()) {
-                listtag.add(NbtUtils.writeBlockState(blockState));
-            } else {
-                listtag.add(new CompoundTag());
+            Pair<BlockState, BlockEntity> pair = iterator.next();
+            BlockState blockState = pair.getFirst();
+            BlockEntity blockEntity = pair.getSecond();
+            CompoundTag pairTag = new CompoundTag();
+
+                pairTag.put("Block", NbtUtils.writeBlockState(blockState));
+            if (blockEntity != null) {
+                pairTag.put("BlockEntity", blockEntity.saveWithFullMetadata(this.level().registryAccess()));
             }
+
+            listTag.add(pairTag);
         }
 
         CompoundTag newData = new CompoundTag();
-        newData.put("Blocks", listtag);
-        this.getEntityData().set(BLOCKS, newData);
+        newData.put("Blocks", listTag);
+        return newData;
     }
-
-//    public List<BlockEntity> getBlockEntities() {
-//        List<BlockState> blockStates = this.getBlocks();
-//
-//        CompoundTag data = this.getEntityData().get(BLOCKS);
-//        BlockEntity[] list = new BlockEntity[36];
-//
-//        if (data.contains("BlockEntities")) {
-//
-//            ListTag listTag = data.getList("BlockEntities", 10);
-//
-//            for(int i = 0; i < list.length; i++) {
-//                BlockState b = blockStates.get(i);
-//                if (b.hasBlockEntity()) {
-//                    list[i] = ((EntityBlock)b.getBlock()).newBlockEntity(BlockPos.ZERO, b);
-//                }
-//            }
-//
-//
-//            return List.of(list);
-//        }
-//        return List.of();
-//    }
-//
-//    public void setBlockEntities(NonNullList<BlockEntity> blockEntities) {
-//        ListTag listtag = new ListTag();
-//        Iterator iterator = blockEntities.iterator();
-//
-//        while(iterator.hasNext()) {
-//            BlockEntity blockEntity = (BlockEntity) iterator.next();
-//            if (blockEntity != null) {
-//                listtag.add(blockEntity.getPersistentData());
-//            } else {
-//                listtag.add(new CompoundTag());
-//            }
-//        }
-//
-//        CompoundTag newData = new CompoundTag();
-//        newData.put("BlockEntities", listtag);
-//        this.getEntityData().set(BLOCKS, newData);
-//    }
-
-//    private static CompoundTag writeBlockEntity(BlockEntity blockEntity) {
-//        CompoundTag compoundtag = new CompoundTag();
-////        compoundtag.putString("Name", BuiltInRegistries.BLOCK_ENTITY_TYPE.getKey(blockEntity.getType()).toString());
-//        compoundtag.put("Data", blockEntity.getPersistentData());
-//
-//        return compoundtag;
-//    }
-//
-//    private static BlockEntity readBlockEntity(CompoundTag tag) {
-////        if (!tag.contains("Name")) {
-////            return null;
-////        }
-////        ResourceLocation resourceLocation = ResourceLocation.parse(tag.getString("Name"));
-////        Optional<? extends Holder<BlockEntityType<?>>> optional = blockEntityGetter.get(ResourceKey.create(Registries.BLOCK_ENTITY_TYPE, resourceLocation));
-////        if (optional.isEmpty()) {
-////            return null;
-////        } else {
-////            BlockEntityType<?> blockEntityType = optional.get().value();
-////            CompoundTag compoundTag = tag.getCompound("Data");
-////            return new Pair<BlockEntityType<?>, CompoundTag>(blockEntityType, compoundTag);
-////        }
-//
-//    }
-
-
 
     public void addAdditionalSaveData (CompoundTag compound) {
         super.addAdditionalSaveData(compound);
-        CompoundTag data = this.getEntityData().get(BLOCKS);
-        if (data.contains("Blocks")) {
-            compound.put("Blocks", data.getList("Blocks", 10));
+        if (this.entityData.get(BLOCKS).contains("Blocks")) {
+            compound.put("Blocks", this.entityData.get(BLOCKS).get("Blocks"));
         }
     }
 
@@ -225,7 +167,7 @@ public class StoneGolem extends PathfinderMob {
 
             CompoundTag newData = new CompoundTag();
             newData.put("Blocks", listtag);
-            this.getEntityData().set(BLOCKS, newData);
+            this.entityData.set(BLOCKS, newData);
         }
     }
 
@@ -234,11 +176,12 @@ public class StoneGolem extends PathfinderMob {
         super.registerGoals();
         this.goalSelector.addGoal(0, new FloatGoal(this));
         this.goalSelector.addGoal(1, new MeleeAttackGoal(this, 1.0, true));
-        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 1.0));
-        this.goalSelector.addGoal(4, new LookAtPlayerGoal(this, Player.class, 6.0F));
-        this.goalSelector.addGoal(5, new LookAtPlayerGoal(this, Mob.class, 8.0F));
-        this.targetSelector.addGoal(6, new NearestAttackableTargetGoal<>(this, Player.class, true));
-        this.targetSelector.addGoal(7, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
+        this.goalSelector.addGoal(2, new WaterAvoidingRandomStrollGoal(this, 0.8));
+        //this.goalSelector.addGoal(10, new RandomLookAroundGoal(this));
+        this.goalSelector.addGoal(3, new LookAtPlayerGoal(this, Player.class, 6.0F));
+        //this.goalSelector.addGoal(10, new LookAtPlayerGoal(this, Mob.class, 8.0F));
+        this.targetSelector.addGoal(4, new NearestAttackableTargetGoal<>(this, Player.class, true));
+        this.targetSelector.addGoal(5, new NearestAttackableTargetGoal<>(this, IronGolem.class, true));
     }
 
 //    public int getHeadRotSpeed() {
@@ -283,29 +226,43 @@ public class StoneGolem extends PathfinderMob {
         }
 
         public void tick() {
-            if (this.operation == MoveControl.Operation.MOVE_TO) {
-                this.operation = MoveControl.Operation.WAIT;
-                double d0 = this.wantedX - this.mob.getX();
-                double d1 = this.wantedZ - this.mob.getZ();
-                double d2 = this.wantedY - this.mob.getY();
-                double d3 = d0 * d0 + d2 * d2 + d1 * d1;
-                if (d3 < 2.500000277905201E-7) {
-                    this.mob.setZza(0.0F);
-                    return;
-                }
+            if (this.mob.getPose() != Pose.SITTING) {
+                if (this.operation == MoveControl.Operation.MOVE_TO) {
+                    this.operation = MoveControl.Operation.WAIT;
+                    double d0 = this.wantedX - this.mob.getX();
+                    double d1 = this.wantedZ - this.mob.getZ();
+                    double d2 = this.wantedY - this.mob.getY();
+                    double d3 = d0 * d0 + d2 * d2 + d1 * d1;
+                    if (d3 < 2.500000277905201E-7) {
+                        this.mob.setZza(0.0F);
+                        return;
+                    }
 
-                float f9 = (float) (Mth.atan2(d1, d0) * 180.0 / 3.1415927410125732) - 90.0F;
-                // alignment = (180 - Mth.degreesDifferenceAbs(this.mob.getYRot(), f9)) / 180;
-                this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 5));
-                this.mob.setSpeed((float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
-                BlockPos blockpos = this.mob.blockPosition();
-                BlockState blockstate = this.mob.level().getBlockState(blockpos);
-                VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level(), blockpos);
-                if (d2 > (double) this.mob.maxUpStep() && d0 * d0 + d1 * d1 < (double) Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES)) {
-                    this.mob.getJumpControl().jump();
-                    this.operation = MoveControl.Operation.JUMPING;
+                    float f9 = (float) (Mth.atan2(d1, d0) * 180.0 / 3.1415927410125732) - 90.0F;
+                    // alignment = (180 - Mth.degreesDifferenceAbs(this.mob.getYRot(), f9)) / 180;
+                    this.mob.setYRot(this.rotlerp(this.mob.getYRot(), f9, 5));
+                    this.mob.setSpeed((float) (this.speedModifier * this.mob.getAttributeValue(Attributes.MOVEMENT_SPEED)));
+                    BlockPos blockpos = this.mob.blockPosition();
+                    BlockState blockstate = this.mob.level().getBlockState(blockpos);
+                    VoxelShape voxelshape = blockstate.getCollisionShape(this.mob.level(), blockpos);
+                    if (d2 > (double) this.mob.maxUpStep() && d0 * d0 + d1 * d1 < (double) Math.max(1.0F, this.mob.getBbWidth()) || !voxelshape.isEmpty() && this.mob.getY() < voxelshape.max(Direction.Axis.Y) + (double) blockpos.getY() && !blockstate.is(BlockTags.DOORS) && !blockstate.is(BlockTags.FENCES)) {
+                        this.mob.getJumpControl().jump();
+                        this.operation = MoveControl.Operation.JUMPING;
+                    }
+                } else {
+                    super.tick();
                 }
-            } else {
+            }
+        }
+    }
+
+    class StoneGolemLookControl extends LookControl {
+        public StoneGolemLookControl () {
+            super(StoneGolem.this);
+        }
+
+        public void tick() {
+            if (this.mob.getPose() != Pose.SITTING) {
                 super.tick();
             }
         }
