@@ -7,28 +7,28 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.CarvedPumpkinBlock;
-import net.minecraft.world.level.block.EntityBlock;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
-import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
+import net.minecraft.world.level.block.state.properties.DirectionProperty;
 import net.minecraft.world.level.block.state.properties.Property;
 import org.jetbrains.annotations.Nullable;
 
-public class GolemHeadBlock extends HorizontalDirectionalBlock implements EntityBlock {
+public class GolemHeadBlock extends BaseEntityBlock {
     public static final MapCodec<GolemHeadBlock> CODEC = simpleCodec(GolemHeadBlock::new);
-    public GolemHeadBlock(BlockBehaviour.Properties properties) {
+
+    public static final DirectionProperty FACING;
+
+    public GolemHeadBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
 
     @Override
-    protected MapCodec<? extends HorizontalDirectionalBlock> codec() {
+    protected MapCodec<GolemHeadBlock> codec() {
         return CODEC;
     }
 
@@ -40,6 +40,18 @@ public class GolemHeadBlock extends HorizontalDirectionalBlock implements Entity
         return (BlockState)this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
+    protected BlockState rotate(BlockState state, Rotation rotation) {
+        return (BlockState)state.setValue(FACING, rotation.rotate((Direction)state.getValue(FACING)));
+    }
+
+    protected BlockState mirror(BlockState state, Mirror mirror) {
+        return state.rotate(mirror.getRotation((Direction)state.getValue(FACING)));
+    }
+
+    protected RenderShape getRenderShape(BlockState state) {
+        return RenderShape.MODEL;
+    }
+
 
     @Nullable
     @Override
@@ -48,17 +60,12 @@ public class GolemHeadBlock extends HorizontalDirectionalBlock implements Entity
         return new GolemHeadBlockEntity(blockPos, blockState);
     }
 
-    @SuppressWarnings("unchecked") // Due to generics, an unchecked cast is necessary here.
     @Override
     public <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> type) {
-        // You can return different tickers here, depending on whatever factors you want. A common use case would be
-        // to return different tickers on the client or server, only tick one side to begin with,
-        // or only return a ticker for some blockstates (e.g. when using a "my machine is working" blockstate property).
         return createTickerHelper(type, ScourgeBlockEntities.STONE_GOLEM_HEAD.get(), GolemHeadBlockEntity::tick);
     }
 
-    @javax.annotation.Nullable
-    protected static <E extends BlockEntity, A extends BlockEntity> BlockEntityTicker<A> createTickerHelper(BlockEntityType<A> serverType, BlockEntityType<E> clientType, BlockEntityTicker<? super E> ticker) {
-        return clientType == serverType ? (BlockEntityTicker<A>) ticker : null;
+    static {
+        FACING = HorizontalDirectionalBlock.FACING;
     }
 }
