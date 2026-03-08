@@ -2,8 +2,12 @@ package com.spydnel.scourge.common.entities;
 
 import com.mojang.datafixers.util.Pair;
 import com.spydnel.scourge.Scourge;
+import com.spydnel.scourge.common.registry.ScourgeSounds;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderers;
 import net.minecraft.core.*;
+import net.minecraft.core.particles.DustParticleOptions;
+import net.minecraft.core.particles.ParticleOptions;
+import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.core.registries.Registries;
@@ -17,6 +21,7 @@ import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.Mth;
@@ -46,9 +51,11 @@ import net.minecraft.world.level.pathfinder.PathFinder;
 import net.minecraft.world.level.pathfinder.PathType;
 import net.minecraft.world.level.pathfinder.WalkNodeEvaluator;
 import net.minecraft.world.phys.AABB;
+import net.minecraft.world.phys.Vec3;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.neoforged.neoforge.attachment.AttachmentType;
 import net.neoforged.neoforge.event.EventHooks;
+import org.joml.Vector3f;
 
 import java.util.Iterator;
 import java.util.List;
@@ -57,6 +64,8 @@ import java.util.Optional;
 public class StoneGolem extends PathfinderMob {
     private EatBlockGoal eatBlockGoal;
     private NonNullList<Pair<BlockState, BlockEntity>> blocks;
+    public final AnimationState sitAnimationState = new AnimationState();
+    private int restTime;
 
     //private List<BlockEntity> blockEntities;
 
@@ -67,7 +76,7 @@ public class StoneGolem extends PathfinderMob {
         super(entityType, level);
         this.moveControl = new StoneGolemMoveControl();
         this.lookControl = new StoneGolemLookControl();
-        this.setPose(Pose.SITTING);
+        //this.setPose(Pose.SITTING);
     }
 
     protected void playStepSound(BlockPos pos, BlockState block) {
@@ -94,6 +103,38 @@ public class StoneGolem extends PathfinderMob {
 
     public void setBlocks(NonNullList<Pair<BlockState, BlockEntity>> blocks) {
         this.entityData.set(BLOCKS, writeBlocks(blocks));
+    }
+
+    public void tick() {
+        super.tick();
+
+        if (restTime > 0) {
+            restTime--;
+        }
+
+        if (restTime > 30) {
+            for (int i = 0; i < 5; i++) {
+                level().addParticle(ParticleTypes.CLOUD,
+                        getX() + Mth.randomBetween(level().getRandom(), -2, 2),
+                        getY() + 0.2,
+                        getZ() + Mth.randomBetween(level().getRandom(), -2, 2),
+                        0, 0, 0);
+            }
+        }
+
+        if (restTime == 1) {
+            sitAnimationState.stop();
+            this.setPose(Pose.STANDING);
+        }
+
+        if (this.getPose() == Pose.SITTING && restTime == 0)
+        {
+            restTime = 50;
+            if (this.level().isClientSide()) {
+                sitAnimationState.startIfStopped(this.tickCount);
+            }
+            this.makeSound(ScourgeSounds.STONE_GOLEM_STAND.value());
+        }
     }
 
     private NonNullList<Pair<BlockState, BlockEntity>> readBlocks(CompoundTag compound) {

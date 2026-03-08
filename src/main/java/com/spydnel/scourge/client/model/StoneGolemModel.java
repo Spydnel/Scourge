@@ -21,7 +21,7 @@ import net.neoforged.api.distmarker.OnlyIn;
 import org.joml.Quaternionf;
 
 @OnlyIn(Dist.CLIENT)
-public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T> {
+public class StoneGolemModel<T extends StoneGolem> extends HierarchicalModel<T> {
 
     private final ModelPart root;
     private final ModelPart leftArm;
@@ -55,9 +55,11 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
                 .texOffs(0, 76).addBox(-12.5F, 11.0F, -8.5F, 13.0F, 5.0F, 17.0F, new CubeDeformation(0.0F))
                 .texOffs(0, 76).addBox(-12.5F, 31.0F, -8.5F, 13.0F, 5.0F, 17.0F, new CubeDeformation(0.0F)), PartPose.offset(-24.0F, -6.0F, 0.0F));
 
-        PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(64, 32).addBox(-9.0F, -3.0F, -6.0F, 9.0F, 23.0F, 12.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, -20.0F, 0.0F));
+        PartDefinition rightLeg = root.addOrReplaceChild("rightLeg", CubeListBuilder.create().texOffs(64, 32).addBox(-9.0F, -3.0F, -6.0F, 9.0F, 23.0F, 12.0F, new CubeDeformation(0.0F))
+                .texOffs(0, 110).addBox(-9.5F, 12.0F, -6.5F, 10.0F, 5.0F, 13.0F, new CubeDeformation(0.0F)), PartPose.offset(-8.0F, -20.0F, 0.0F));
 
-        PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(64, 32).mirror().addBox(0.0F, -3.0F, -6.0F, 9.0F, 23.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, -20.0F, 0.0F));
+        PartDefinition leftLeg = root.addOrReplaceChild("leftLeg", CubeListBuilder.create().texOffs(64, 32).mirror().addBox(0.0F, -3.0F, -6.0F, 9.0F, 23.0F, 12.0F, new CubeDeformation(0.0F)).mirror(false)
+                .texOffs(0, 110).mirror().addBox(-0.5F, 12.0F, -6.5F, 10.0F, 5.0F, 13.0F, new CubeDeformation(0.0F)).mirror(false), PartPose.offset(8.0F, -20.0F, 0.0F));
 
         return LayerDefinition.create(meshdefinition, 128, 128);
     }
@@ -82,8 +84,13 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
 
     @Override
     public void setupAnim(T entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+        this.root().getAllParts().forEach(ModelPart::resetPose);
 
         if (entity.getPose() != Pose.SITTING) {
+
+            this.leftArm.zRot = -0.2f * limbSwingAmount;
+            this.rightArm.zRot = 0.2f * limbSwingAmount;
+
             this.head.yRot = Mth.clamp(netHeadYaw, -45, 45) * 0.017453292f;
 
             float speed = 1.1f;
@@ -100,16 +107,19 @@ public class StoneGolemModel<T extends LivingEntity> extends HierarchicalModel<T
             this.root.zRot = Mth.cos(limbSwing * speed) * 0.1f * limbSwingAmount;
             this.head.y = -52 + ((Mth.cos(limbSwing * speed * 2) * 1.5f) + 1.5f) * limbSwingAmount;
 
-            this.rightArm.xRot = - ((Mth.cos(limbSwing * speed) * 0.3f) - 0.5f) * limbSwingAmount;
+            this.rightArm.xRot = -((Mth.cos(limbSwing * speed) * 0.3f) - 0.5f) * limbSwingAmount;
             this.leftArm.xRot = ((Mth.cos(limbSwing * speed) * 0.3f) + 0.5f) * limbSwingAmount;
-
-            this.leftArm.zRot = -0.1f;
-            this.rightArm.zRot = 0.1f;
-        } else {
-            this.head.y = -24;
-            this.leftArm.visible = false;
-            this.rightArm.visible = false;
         }
+
+        boolean showArms = !(entity.getPose() == Pose.SITTING && !entity.sitAnimationState.isStarted());
+        this.leftArm.visible = showArms;
+        this.rightArm.visible = showArms;
+
+        if (!showArms) {
+            this.head.y = -24;
+        }
+
+        this.animate(entity.sitAnimationState, StoneGolemAnimation.animation, ageInTicks, 1.0F);
 
 
 //        float targetRot = entity.getYHeadRot() * 0.017453292f;

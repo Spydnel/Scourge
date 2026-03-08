@@ -7,5 +7,14 @@
         "type": "event"
       }
     ]
+  },
+  "entity.stone_golem.stand": {
+    "sounds": [
+      {
+        "name": "scourge:entity/stone_golem/stand",
+        "pitch": 1.0,
+        "type": "file"
+      }
+    ]
   }
 }

@@ -11,6 +11,7 @@ import net.minecraft.core.NonNullList;
 import net.minecraft.core.Vec3i;
 import net.minecraft.gametest.framework.StructureUtils;
 import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.Pose;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.Rotation;
@@ -41,7 +42,7 @@ public class GolemHeadBlockEntity extends BlockEntity {
             });
         }
 
-        if (level.hasNearbyAlivePlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 2) && !blockEntity.activated)
+        if (level.hasNearbyAlivePlayer(pos.getX() + 0.5, pos.getY() + 0.5, pos.getZ() + 0.5, 8) && !blockEntity.activated)
         {
             //level.setBlockAndUpdate(pos, Blocks.REDSTONE_BLOCK.defaultBlockState());
 
@@ -108,6 +109,7 @@ public class GolemHeadBlockEntity extends BlockEntity {
             stoneGolem.setPos(entityPos.getX() + 0.5, entityPos.getY() -1, entityPos.getZ() + 0.5);
             stoneGolem.setYRot(direction.toYRot());
             stoneGolem.yHeadRot = stoneGolem.getYRot();
+            stoneGolem.setPose(Pose.SITTING);
 
             level.addFreshEntity(stoneGolem);
         }
